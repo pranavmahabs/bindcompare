@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ $# -ne 3 ]; then
+if [ $# -ne 5 ]; then
 	echo $0: "Usage: 'sbatch preprocess.sh' or 'bash preprocess.sh'
             1) DNA Bed File Path
             2) RNA Bed File Path

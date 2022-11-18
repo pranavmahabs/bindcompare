@@ -116,7 +116,7 @@ out_name = sys.argv[5]
 processed_dna_bed = process_bed(dna)
 processed_rna_bed = process_bed(rna)
 
-overlap_full, overlap_front, overlap_end, overlap_locs, overlap_ext = compare_chrom_binds(processed_dna_bed, processed_rna_bed, "DNA", 1000, True)
+overlap_full, overlap_front, overlap_end, overlap_locs, overlap_ext = compare_chrom_binds(processed_dna_bed, processed_rna_bed, "DNA", int(scope), True)
 
 #setting up the array in numpy
 overlap_full = np.asarray(overlap_full,dtype='int')
@@ -143,10 +143,12 @@ ax1.scatter(x, y, s=5, c='y', marker="o", label='External Overlaps')
 plt.legend(loc='upper left')
 plt.ylabel("Frequency")
 plt.xlabel("Overlap of Binding Sites")
-plt.savefig('overlaps.png')
+plt.title(f"Frequency of Binding Overlaps Over {2 * int(scope)} Base Pair Range")
+outpath = out_name + "/" + sample_name + "_" + "overlaps.png"
+plt.savefig(outpath)
 plt.close()
 
-categories = ["Complete Peak Overlap", "Partial Overlap Front", "Partial Overlap End", "Before Reference Peak", "After Reference Peak"]
+categories = ["Complete Overlap", "Partial Overlap Front", "Partial Overlap End", "Before Reference Peak", "After Reference Peak"]
 abbr = ["OF", "OE", "OB", "BR", "AR"]
 counts = [0, 0, 0, 0, 0]
 for olap in overlap_locs:
@@ -160,7 +162,8 @@ def pie_fmt(x):
 ax1.pie(counts, labels=categories, autopct=pie_fmt, startangle=90)
 ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
 plt.title(f'Categorization of {within.counter} Found Overlaps')
-plt.savefig('pie.png')
+outpath = out_name + "/" + sample_name + "_" + "pie.png"
+plt.savefig(outpath)
 plt.close()
 
 categories = ["Overlaps", "DNA Binding Sites", "RNA Binding Sites"]
@@ -180,7 +183,8 @@ for bar in bars:
 plt.ylabel("")
 plt.xlabel("")
 plt.title('Number of Overlaps and Total Binding Sites in DNA/RNA')
-plt.savefig("bartotals.png")
+outpath = out_name + "/" + sample_name + "_" + "bartotals.png"
+plt.savefig(outpath)
 plt.close()
 
 
