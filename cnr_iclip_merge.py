@@ -70,6 +70,7 @@ def compare_chrom_binds(dna_loci, rna_loci, reference, scope, count_more):
                     # No overlap in the binding sites... continue. 
                     continue
                 else:
+                    skip = False
                     overlap_type = "None"
                     ot = "None"
                     # overlap_all.extend(overlap)
@@ -92,16 +93,17 @@ def compare_chrom_binds(dna_loci, rna_loci, reference, scope, count_more):
                         overlap_type = "Overlaps with Beg. of Ref Peak"
                         ot = "OB"
                     else:
-
-                        within.counter = within.counter + 1
+                        # within.counter = within.counter + 1
                         overlap_ext.extend(overlap)
-                        if exp_bind[1] < ref_bind[0]:
-                            overlap_type = "Before Ref Peak"
-                            ot = "BR"
-                        elif exp_bind[0] > ref_bind[1]:
-                            overlap_type = "After Ref Peak"
-                            ot = "AR"
-                    overlap_locs.append((chromosome, ref_bind[0], ref_bind[1], overlap_type, ot))
+                        skip = True
+                        # if exp_bind[1] < ref_bind[0]:
+                        #     overlap_type = "Before Ref Peak"
+                        #     ot = "BR"
+                        # elif exp_bind[0] > ref_bind[1]:
+                        #     overlap_type = "After Ref Peak"
+                        #     ot = "AR"
+                    if not skip:
+                        overlap_locs.append((chromosome, ref_bind[0], ref_bind[1], overlap_type, ot))
                     if not count_more:
                         break
 
@@ -124,6 +126,7 @@ overlap_front = np.asarray(overlap_front,dtype='int')
 overlap_end = np.asarray(overlap_end,dtype='int')
 overlap_ext = np.asarray(overlap_ext,dtype='int')
 
+hfont = {'fontname':'Sans Serif'}
 
 fig = plt.figure()
 ax1 = fig.add_subplot(111)
@@ -141,16 +144,16 @@ x ,y  = np.unique(overlap_ext, return_counts=True) # counting occurrence of each
 ax1.scatter(x, y, s=5, c='y', marker="o", label='External Overlaps')
 
 plt.legend(loc='upper left')
-plt.ylabel("Frequency")
-plt.xlabel("Overlap of Binding Sites")
-plt.title(f"Frequency of Binding Overlaps Over {2 * int(scope)} Base Pair Range")
+plt.ylabel("Frequency", **hfont)
+plt.xlabel("Overlap of Binding Sites", **hfont)
+plt.title(f"Frequency of Binding Overlaps Over {2 * int(scope)} Base Pair Range", **hfont)
 outpath = out_name + "/" + sample_name + "_" + "overlaps.png"
 plt.savefig(outpath)
 plt.close()
 
-categories = ["Complete Overlap", "Partial Overlap Front", "Partial Overlap End", "Before Reference Peak", "After Reference Peak"]
-abbr = ["OF", "OE", "OB", "BR", "AR"]
-counts = [0, 0, 0, 0, 0]
+categories = ["Complete Overlap", "Partial Overlap Front", "Partial Overlap End"]
+abbr = ["OF", "OE", "OB"]
+counts = [0, 0, 0]
 for olap in overlap_locs:
     index = abbr.index(olap[4])
     counts[index] = counts[index] + 1
@@ -161,28 +164,25 @@ def pie_fmt(x):
 
 ax1.pie(counts, labels=categories, autopct=pie_fmt, startangle=90)
 ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-plt.title(f'Categorization of {within.counter} Found Overlaps')
+plt.title(f'Categorization of {within.counter} Found Overlaps', **hfont)
 outpath = out_name + "/" + sample_name + "_" + "pie.png"
 plt.savefig(outpath)
 plt.close()
 
-categories = ["Overlaps", "DNA Binding Sites", "RNA Binding Sites"]
+categories = ["Overlaps", "RNA Binding Sites"]
 num_rna = 0
-num_dna = 0
 for rna_chrom in processed_rna_bed.keys():
     num_rna = num_rna + len(processed_rna_bed[rna_chrom])
-for dna_chrom in processed_dna_bed.keys():
-    num_dna = num_dna + len(processed_dna_bed[dna_chrom])
-vals = [within.counter, num_dna, num_rna]
-bars = plt.bar(categories, vals)
+vals = [within.counter, num_rna]
+bars = plt.bar(categories, vals, color=['red', 'red'])
 
 for bar in bars:
     yval = bar.get_height()
-    plt.text(bar.get_x() + 0.3, yval + .25, yval)
+    plt.text(bar.get_x() + 0.35, yval + .25, yval)
 
 plt.ylabel("")
 plt.xlabel("")
-plt.title('Number of Overlaps and Total Binding Sites in DNA/RNA')
+plt.title('Number of Overlaps and Total Binding Sites in DNA/RNA', **hfont)
 outpath = out_name + "/" + sample_name + "_" + "bartotals.png"
 plt.savefig(outpath)
 plt.close()
