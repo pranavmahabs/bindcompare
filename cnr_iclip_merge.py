@@ -132,72 +132,72 @@ print("Average Peak Sizes for S2:")
 print(f'DNA: {average_peak_size(processed_dna_bed)} base pairs.')
 print(f'RNA: {average_peak_size(processed_rna_bed)} base pairs')
 
-# #setting up the array in numpy
-# overlap_full = np.asarray(overlap_full,dtype='int')
-# overlap_front = np.asarray(overlap_front,dtype='int')
-# overlap_end = np.asarray(overlap_end,dtype='int')
-# overlap_ext = np.asarray(overlap_ext,dtype='int')
+#setting up the array in numpy
+overlap_full = np.asarray(overlap_full,dtype='int')
+overlap_front = np.asarray(overlap_front,dtype='int')
+overlap_end = np.asarray(overlap_end,dtype='int')
+overlap_ext = np.asarray(overlap_ext,dtype='int')
 
-# hfont = {'fontname':'Sans Serif'}
+hfont = {'fontname':'Sans Serif'}
 
-# fig = plt.figure()
-# ax1 = fig.add_subplot(111)
+fig = plt.figure()
+ax1 = fig.add_subplot(111)
 
-# x ,y  = np.unique(overlap_full, return_counts=True) # counting occurrence of each loan
-# ax1.scatter(x, y, s=10, c='m', marker="s", label='Complete Peak Overlap')
+x ,y  = np.unique(overlap_full, return_counts=True) # counting occurrence of each loan
+ax1.scatter(x, y, s=10, c='m', marker="s", label='Complete Peak Overlap')
 
-# x ,y  = np.unique(overlap_front, return_counts=True) # counting occurrence of each loan
-# ax1.scatter(x, y, s=5, c='r', marker="o", label='Overlap Ref Front')
+x ,y  = np.unique(overlap_front, return_counts=True) # counting occurrence of each loan
+ax1.scatter(x, y, s=5, c='r', marker="o", label='Overlap Ref Front')
 
-# x ,y  = np.unique(overlap_end, return_counts=True) # counting occurrence of each loan
-# ax1.scatter(x, y, s=5, c='b', marker="o", label='Overlaps Ref End')
+x ,y  = np.unique(overlap_end, return_counts=True) # counting occurrence of each loan
+ax1.scatter(x, y, s=5, c='b', marker="o", label='Overlaps Ref End')
 
-# x ,y  = np.unique(overlap_ext, return_counts=True) # counting occurrence of each loan
-# ax1.scatter(x, y, s=5, c='y', marker="o", label='External Overlaps')
+x ,y  = np.unique(overlap_ext, return_counts=True) # counting occurrence of each loan
+ax1.scatter(x, y, s=5, c='y', marker="o", label='External Overlaps')
 
-# plt.legend(loc='upper left')
-# plt.ylabel("Frequency", **hfont)
-# plt.xlabel("Overlap of Binding Sites", **hfont)
-# plt.title(f"Frequency of Binding Overlaps Over {2 * int(scope)} Base Pair Range", **hfont)
-# outpath = out_name + "/" + sample_name + "_" + "overlaps.png"
-# plt.savefig(outpath)
-# plt.close()
+plt.legend(loc='upper left')
+plt.ylabel("Frequency", **hfont)
+plt.xlabel("Overlap of Binding Sites", **hfont)
+plt.title(f"Frequency of Binding Overlaps Over {2 * int(scope)} Base Pair Range", **hfont)
+outpath = out_name + "/" + sample_name + "_" + "overlaps.png"
+plt.savefig(outpath)
+plt.close()
 
-# categories = ["Complete Overlap", "Partial Overlap Front", "Partial Overlap End"]
-# abbr = ["OF", "OE", "OB"]
-# counts = [0, 0, 0]
-# for olap in overlap_locs:
-#     index = abbr.index(olap[4])
-#     counts[index] = counts[index] + 1
-# fig1, ax1 = plt.subplots()
+categories = ["Complete Overlap", "Partial Overlap Front", "Partial Overlap End"]
+abbr = ["OF", "OE", "OB"]
+counts = [0, 0, 0]
+for olap in overlap_locs:
+    index = abbr.index(olap[4])
+    counts[index] = counts[index] + 1
+fig1, ax1 = plt.subplots()
 
-# def pie_fmt(x):
-#     return '{:.0f}'.format((within.counter)*x/100)
+def pie_fmt(x):
+    return '{:.0f}'.format((within.counter)*x/100)
 
-# ax1.pie(counts, labels=categories, autopct=pie_fmt, startangle=90)
-# ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-# plt.title(f'Categorization of {within.counter} Found Overlaps', **hfont)
-# outpath = out_name + "/" + sample_name + "_" + "pie.png"
-# plt.savefig(outpath)
-# plt.close()
+ax1.pie(counts, labels=categories, autopct=pie_fmt, startangle=90)
+ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+plt.title(f'Categorization of {within.counter} Found Overlaps', **hfont)
+outpath = out_name + "/" + sample_name + "_" + "pie.png"
+plt.savefig(outpath)
+plt.close()
 
-# categories = ["Overlaps", "RNA Binding Sites"]
-# num_rna = 0
-# for rna_chrom in processed_rna_bed.keys():
-#     num_rna = num_rna + len(processed_rna_bed[rna_chrom])
-# vals = [within.counter, num_rna]
-# bars = plt.bar(categories, vals, color=['red', 'red'])
+categories = ["Overlaps", "RNA Binding Sites"]
+num_rna = 0
+for rna_chrom in processed_rna_bed.keys():
+    num_rna = num_rna + len(processed_rna_bed[rna_chrom])
+vals = [within.counter, num_rna]
+bars = plt.bar(categories, vals, color=['red', 'red'])
 
-# for bar in bars:
-#     yval = bar.get_height()
-#     plt.text(bar.get_x() + 0.35, yval + .25, yval)
+for bar in bars:
+    yval = bar.get_height()
+    plt.text(bar.get_x() + 0.35, yval + .25, yval)
 
-# plt.ylabel("")
-# plt.xlabel("")
-# plt.title('Number of Overlaps and Total Binding Sites in DNA/RNA', **hfont)
-# outpath = out_name + "/" + sample_name + "_" + "bartotals.png"
-# plt.savefig(outpath)
-# plt.close()
+plt.ylabel("")
+plt.xlabel("")
+plt.title('Number of Overlaps and Total Binding Sites in DNA/RNA', **hfont)
+outpath = out_name + "/" + sample_name + "_" + "bartotals.png"
+plt.savefig(outpath)
+plt.close()
 
 
 
