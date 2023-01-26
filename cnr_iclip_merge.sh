@@ -17,4 +17,5 @@ SCOPE=$3
 SNAME=$4
 OUT=$5
 
-python3 cnr_iclip_merge.py ${DNA} ${RNA} ${SCOPE} ${SNAME} ${OUT}
+python3 cnr_iclip_merge.py ${DNA} ${RNA} ${SCOPE} ${SNAME} ${OUT} > ${OUT}/${SNAME}_summary.txt
+

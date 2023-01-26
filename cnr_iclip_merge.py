@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 
 
 def process_bed(bedfile):
-    # Read in table using dask library.
     reference_peaks = {}
     with open(bedfile) as table:
         for line in table:
@@ -22,6 +21,12 @@ def process_bed(bedfile):
                 else:
                     reference_peaks[this_chrom] = [(bed_row[1], bed_row[2], bed_row[4])]
     return reference_peaks
+
+def process_gtf(gene_file):
+    all_genes = {}
+    with open(gene_file) as table:
+        for line in table:
+            bed_row = table.split()
 
 def average_peak_size(processed_bed):
     total_sum, total_peaks = 0, 0
@@ -102,15 +107,8 @@ def compare_chrom_binds(dna_loci, rna_loci, reference, scope, count_more):
                         overlap_type = "Overlaps with Beg. of Ref Peak"
                         ot = "OB"
                     else:
-                        # within.counter = within.counter + 1
                         overlap_ext.extend(overlap)
                         skip = True
-                        # if exp_bind[1] < ref_bind[0]:
-                        #     overlap_type = "Before Ref Peak"
-                        #     ot = "BR"
-                        # elif exp_bind[0] > ref_bind[1]:
-                        #     overlap_type = "After Ref Peak"
-                        #     ot = "AR"
                     if not skip:
                         overlap_locs.append((chromosome, ref_bind[0], ref_bind[1], overlap_type, ot))
                     if not count_more:
@@ -126,11 +124,11 @@ out_name = sys.argv[5]
 processed_dna_bed = process_bed(dna)
 processed_rna_bed = process_bed(rna)
 
-overlap_full, overlap_front, overlap_end, overlap_locs, overlap_ext = compare_chrom_binds(processed_dna_bed, processed_rna_bed, "DNA", int(scope), True)
+overlap_full, overlap_front, overlap_end, overlap_coords, overlap_ext = compare_chrom_binds(processed_dna_bed, processed_rna_bed, "DNA", int(scope), True)
 
-print("Average Peak Sizes for S2:")
+print(f'Average Peak Sizes for {sample_name}:')
 print(f'DNA: {average_peak_size(processed_dna_bed)} base pairs.')
-print(f'RNA: {average_peak_size(processed_rna_bed)} base pairs')
+print(f'RNA: {average_peak_size(processed_rna_bed)} base pairs.\n')
 
 #setting up the array in numpy
 overlap_full = np.asarray(overlap_full,dtype='int')
@@ -166,7 +164,7 @@ plt.close()
 categories = ["Complete Overlap", "Partial Overlap Front", "Partial Overlap End"]
 abbr = ["OF", "OE", "OB"]
 counts = [0, 0, 0]
-for olap in overlap_locs:
+for olap in overlap_coords:
     index = abbr.index(olap[4])
     counts[index] = counts[index] + 1
 fig1, ax1 = plt.subplots()
@@ -199,12 +197,7 @@ outpath = out_name + "/" + sample_name + "_" + "bartotals.png"
 plt.savefig(outpath)
 plt.close()
 
+print("All plots saved successfully.")
 
-
-
-
-
-
-
-
+# Gene Coordinate Section
 
