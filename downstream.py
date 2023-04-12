@@ -43,6 +43,6 @@ fp.close()
 if len(df) > 50:
     cmd_str = "streme -p " + fastapath + " --dna --oc " + outdir + "/motifanalysis"
 else:
-    cmd_str = "meme " + fastapath +  " --dna --nmotifs 5 --maxw 50 --oc " + outdir + "/motifanalysis > /tmp/out.txt"
+    cmd_str = "meme -p" + fastapath +  " --dna --nmotifs 5 --maxw 50 --oc " + outdir + "/motifanalysis > /tmp/out.txt"
 # Run STREME or MEME and produce the motif analysis
 subprocess.run(cmd_str, shell=True)

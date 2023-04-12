@@ -30,9 +30,11 @@ FASTA=$7
 
 python3 merge.py ${DNA} ${RNA} ${SCOPE} ${SNAME} ${OUT} ${GTF} > ${OUT}/${SNAME}_summary.txt
 
-python3 downstream.py ${OUT}/${SNAME}_genes.csv ${FASTA} ${OUT} >> ${OUT}/${SNAME}_summary.txt
+python3 downstream.py ${OUT}/${SNAME}_overlaps.csv ${FASTA} ${OUT} >> ${OUT}/${SNAME}_summary.txt
 
 Rscript geneont.R --outdir ${OUT} --expcondition ${SNAME}
+
+echo "Completed BindCompare!"
 
 # EXAMPLE TERMINAL CODE
 # ./bindcompare.sh /Users/pranavmahableshwarkar/BrownUniversity/LarschanLab/Analytics/PM_NewScripts/CNR_bedfiles/KC_consensusPeaks.bed /Users/pranavmahableshwarkar/BrownUniversity/LarschanLab/Analytics/PM_NewScripts/iCLIP_bedfiles/Kc_ChF.bed 750 KC SampleOut /Users/pranavmahableshwarkar/BrownUniversity/LarschanLab/Analytics/reference/dmel-all-r6.42.gtf /Users/pranavmahableshwarkar/BrownUniversity/LarschanLab/Analytics/reference/dm6.fa

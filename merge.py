@@ -141,19 +141,19 @@ def compare_chrom_binds(dna_loci, rna_loci, reference, scope, count_more):
 
     return overlap_full, overlap_front, overlap_end, overlap_locs, overlap_ext
 
-dna = sys.argv[1]
-rna = sys.argv[2]
+base_bed = sys.argv[1]
+overlay_bed = sys.argv[2]
 scope = sys.argv[3]
 sample_name = sys.argv[4]
 out_name = sys.argv[5]
-processed_dna_bed = process_bed(dna)
-processed_rna_bed = process_bed(rna)
+processed_base_bed = process_bed(base_bed)
+processed_overlay_bed = process_bed(overlay_bed)
 
-full_o, front_o, end_o, overlap_coords, ext_o = compare_chrom_binds(processed_dna_bed, processed_rna_bed, "DNA", int(scope), True)
+full_o, front_o, end_o, overlap_coords, ext_o = compare_chrom_binds(processed_base_bed, processed_overlay_bed, "DNA", int(scope), True)
 
 print(f'Average Peak Sizes for {sample_name}:')
-print(f'DNA: {average_peak_size(processed_dna_bed)} base pairs.')
-print(f'RNA: {average_peak_size(processed_rna_bed)} base pairs.\n')
+print(f'DNA: {average_peak_size(processed_base_bed)} base pairs.')
+print(f'RNA: {average_peak_size(processed_overlay_bed)} base pairs.\n')
 
 #setting up the array in numpy
 overlap_full = np.asarray(full_o,dtype='int')
@@ -205,10 +205,10 @@ outpath = out_name + "/" + sample_name + "_" + "pie.png"
 plt.savefig(outpath)
 plt.close()
 
-categories = ["Overlaps", "RNA Binding Sites"]
+categories = ["Overlaps", "Total Binding Sites in Overlayed Bed"]
 num_rna = 0
-for rna_chrom in processed_rna_bed.keys():
-    num_rna = num_rna + len(processed_rna_bed[rna_chrom])
+for rna_chrom in processed_overlay_bed.keys():
+    num_rna = num_rna + len(processed_overlay_bed[rna_chrom])
 vals = [within.counter, num_rna]
 bars = plt.bar(categories, vals, color=['red', 'red'])
 
@@ -218,7 +218,7 @@ for bar in bars:
 
 plt.ylabel("")
 plt.xlabel("")
-plt.title('Number of Overlaps and Total Binding Sites in DNA/RNA', **hfont)
+plt.title('Total Number of Overlaps and Binding Sites in Overlayed Bed', **hfont)
 outpath = out_name + "/" + sample_name + "_" + "bartotals.png"
 plt.savefig(outpath)
 plt.close()
@@ -268,5 +268,3 @@ df = pd.DataFrame(gene_arr.reshape(len(gene_arr), -1), columns=["Gene ID"])
 
 outpath = "/tmp/gene_list.csv"
 df.to_csv(outpath)
-
-print("\nExported Gene IDs from GTF file to CSV. Initiating Sequence Extraction!")
