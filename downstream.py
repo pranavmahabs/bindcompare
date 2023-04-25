@@ -41,8 +41,8 @@ fp.close()
 
 # Need to use STREME if num_sequences > 50:
 if len(df) > 50:
-    cmd_str = "streme -p " + fastapath + " --dna --oc " + outdir + "/motifanalysis"
+    cmd_str = "streme -p " + fastapath + " --dna --oc " + outdir + "/motifanalysis 2> /dev/null"
 else:
-    cmd_str = "meme -p" + fastapath +  " --dna --nmotifs 5 --maxw 50 --oc " + outdir + "/motifanalysis > /tmp/out.txt"
+    cmd_str = "meme -p" + fastapath +  " --dna --nmotifs 5 --maxw 50 --oc " + outdir + "/motifanalysis 2> /tmp/out.txt"
 # Run STREME or MEME and produce the motif analysis
-subprocess.run(cmd_str, shell=True)
+subprocess.run(cmd_str, shell=True, stdout=subprocess.DEVNULL)

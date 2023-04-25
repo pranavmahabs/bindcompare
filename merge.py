@@ -18,9 +18,9 @@ def process_bed(bedfile):
     with open(bedfile) as table:
         for line in table:
             bed_row = line.split()
-            if (bed_row[0])[0:3] != "chr" and (bed_row[0])[0:3] != "Chr":
-                bed_row[0] = "chr" + bed_row[0]
-            if (bed_row[0])[0:5] == "chrUn" or (len(bed_row[0]) > 6) or (bed_row[0] == "chr"):
+            if (bed_row[0])[0:3] == "chr" or (bed_row[0])[0:3] == "Chr":
+                bed_row[0] = (bed_row[0])[3:]
+            if (bed_row[0])[0:2] == "Un" or (len(bed_row[0]) > 5) or (bed_row[0] == "chr"):
                 continue
             else:
                 this_chrom = bed_row[0]
@@ -37,9 +37,9 @@ def process_gtf(gene_file):
     with open(gene_file) as table:
         for line in table:
             gtf_row = line.split()
-            if (gtf_row[0])[0:3] != "chr" and (gtf_row[0])[0:3] != "Chr":
-                gtf_row[0] = "chr" + gtf_row[0]
-            if (gtf_row[0])[0:5] == "chrUn" or (len(gtf_row[0]) > 6) or (gtf_row[0] == "chr"):
+            if (gtf_row[0])[0:3] == "chr" or (gtf_row[0])[0:3] == "Chr":
+                gtf_row[0] = (gtf_row[0])[3:]
+            if (gtf_row[0])[0:2] == "Un" or (len(gtf_row[0]) > 6) or (gtf_row[0] == "chr"):
                 continue
             else:
                 this_chrom = gtf_row[0]
@@ -151,9 +151,9 @@ processed_overlay_bed = process_bed(overlay_bed)
 
 full_o, front_o, end_o, overlap_coords, ext_o = compare_chrom_binds(processed_base_bed, processed_overlay_bed, "DNA", int(scope), True)
 
-print(f'Average Peak Sizes for {sample_name}:')
-print(f'DNA: {average_peak_size(processed_base_bed)} base pairs.')
-print(f'RNA: {average_peak_size(processed_overlay_bed)} base pairs.\n')
+print(f'\nAverage Peak Sizes for {sample_name}:')
+print(f'Base BED File:      {average_peak_size(processed_base_bed)} base pairs.')
+print(f'Overlayed BED File: {average_peak_size(processed_overlay_bed)} base pairs.')
 
 #setting up the array in numpy
 overlap_full = np.asarray(full_o,dtype='int')
@@ -223,7 +223,7 @@ outpath = out_name + "/" + sample_name + "_" + "bartotals.png"
 plt.savefig(outpath)
 plt.close()
 
-print("All plots saved successfully.")
+print("All plots in merge.py saved successfully.\n")
 
 # # Gene Coordinate Section
 gtf = sys.argv[6]
@@ -265,6 +265,6 @@ for gene in all_geneids:
     print(gene, end=", ")
 gene_arr = np.array(list(all_geneids))
 df = pd.DataFrame(gene_arr.reshape(len(gene_arr), -1), columns=["Gene ID"])
-
+print("\n")
 outpath = "/tmp/gene_list.csv"
 df.to_csv(outpath)

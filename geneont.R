@@ -28,9 +28,7 @@ run_go <- function(output_dir, condition_string) {
     output_dir <- paste(output_dir, "/", sep = "")
   }
   significant <- read.csv("/tmp/gene_list.csv")
-  print(significant)
   go_one_all <- as.character(significant[, c('Gene.ID')])
-  print(go_one_all)
 
   gostres_one <- gost(
     query = go_one_all, organism = "dmelanogaster",
@@ -45,14 +43,14 @@ run_go <- function(output_dir, condition_string) {
 
   outpath <- paste(output_dir, condition_string, "_GeneOnt.png", sep = "")
   publish_gostplot(p,
-    highlight_terms = gostres_one$result[c(1:3), ],
+    highlight_terms = (gostres_one$result[c(1:3), ])$term_id,
     width = NA, height = NA, filename = outpath
   )
 
   cols <- c("source", "term_name", "term_size", "intersection_size")
   outpath <- paste(output_dir, condition_string, "_GeneOntTable.pdf", sep = "")
   publish_gosttable(gostres_one,
-    highlight_terms = gostres_one$result[c(1:150), ],
+    highlight_terms = (gostres_one$result[c(1:150), ])$term_id,
     use_colors = TRUE, show_columns = cols, filename = outpath
   )
 }
