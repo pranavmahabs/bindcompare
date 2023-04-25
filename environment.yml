@@ -1,0 +1,16 @@
+name: bindcompare
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - pybedtools
+  - bedtools
+  - r-gprofiler2
+  - meme
+  - matplotlib-base
+  - r-optparse
+  - r-shiny
+  - r-shinythemes
+  - samtools
+  - r-eulerr
