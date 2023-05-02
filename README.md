@@ -2,9 +2,9 @@
 
 This is a novel DNA/RNA Integration tool meant to analyze the overlap between protein binding sites. The input data is in the form of peak-called BED files from programs such as MACS2 and SEACR.
 
-### What Does BindCompare Do?
 
-Oftentimes, regulation from factors occur within a larger locus surrounding the marked binding site. The script searches for overlaps between these binding sites in a chosen scope. Using the Genome File and the Genes GTF File, corresponding Gene IDs are extracted 
+
+Oftentimes, regulation from factors occur within a larger locus surrounding the marked binding site. The script searches for overlaps between these binding sites in a chosen scope. 
 
 
 ## Quick Start: 3 Steps
