@@ -30,7 +30,7 @@ server <- function(input, output, session) {
       genome_path <- reactive({input$genome_fa_filepath})
       
       # Run the command and capture both the output and the exit status
-      bindcompare <- paste0(shellfile(), "/bindcompare.sh")
+      bindcompare <- paste0(shellfile(), "/bindapp/bindcompare.sh")
       cmd <- paste(c(bindcompare, base_bed(), olay_bed(), scope(), name(), outdir(), gtf_path(), genome_path()), collapse = " ")
       command_output <- system(cmd, intern = TRUE)
       summary_path <- paste0(outdir(), "/", name(), "_summary.txt")
@@ -52,8 +52,8 @@ server <- function(input, output, session) {
   observeEvent(input$submit_button, {
     # Parse the input gene lists
     # Parse the input gene lists
-    gene_list_1 <- strsplit(input$gene_list_1, ",")[[1]]
-    gene_list_2 <- strsplit(input$gene_list_2, ",")[[1]]
+    gene_list_1 <- strsplit(input$gene_list_1, "\\s+")[[1]]
+    gene_list_2 <- strsplit(input$gene_list_2, "\\s+")[[1]]
     
     # Calculate the Jaccard similarity
     intersection <- length(intersect(gene_list_1, gene_list_2))

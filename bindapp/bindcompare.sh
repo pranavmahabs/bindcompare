@@ -32,20 +32,16 @@ GTF=$6
 FASTA=$7
 
 # echo "Beginning BindCompare! Any errors will be printed in the Summary File or Command Line."
-python3 ../merge.py ${DNA} ${RNA} ${SCOPE} ${SNAME} ${OUT} ${GTF} > ${OUT}/${SNAME}_summary.txt
+python3 merge.py ${DNA} ${RNA} ${SCOPE} ${SNAME} ${OUT} ${GTF} > ${OUT}/${SNAME}_summary.txt
 
-# echo "Completed Merge, Beginning Downstream Analysis!"
-python3 ../downstream.py ${OUT}/${SNAME}_overlaps.csv ${FASTA} ${OUT} >> ${OUT}/${SNAME}_summary.txt
+# # echo "Completed Merge, Beginning Downstream Analysis!"
+python3 downstream.py ${OUT}/${SNAME}_overlaps.csv ${FASTA} ${OUT} >> ${OUT}/${SNAME}_summary.txt
 
-# echo "Finished Motif Analysis, Beginning Gene Ontology!"
-Rscript ../geneont.R --outdir ${OUT} --expcondition ${SNAME}>> ${OUT}/${SNAME}_summary.txt
+# # echo "Finished Motif Analysis, Beginning Gene Ontology!"
+Rscript geneont.R --outdir ${OUT} --expcondition ${SNAME}>> ${OUT}/${SNAME}_summary.txt
 
 echo "Completed BindCompare! Time Stamp:"
 date
 
 # EXAMPLE TERMINAL CODE
-# ./bindcompare.sh /Users/pranavmahableshwarkar/BrownUniversity/LarschanLab/Analytics/PM_NewScripts/CNR_bedfiles/KC_consensusPeaks.bed 
-# /Users/pranavmahableshwarkar/BrownUniversity/LarschanLab/Analytics/PM_NewScripts/iCLIP_bedfiles/Kc_ChF.bed 
-# 750 KC SampleOut 
-# /Users/pranavmahableshwarkar/BrownUniversity/LarschanLab/Analytics/reference/dmel-all-r6.42.gtf 
-# /Users/pranavmahableshwarkar/BrownUniversity/LarschanLab/Analytics/reference/dm6.fa
+# ./bindcompare.sh ~/CNR_bedfiles/KC_consensusPeaks.bed ~/iCLIP_bedfiles/Kc_ChF.bed 750 KC ~/bindcompare/KCSampleOut ~/reference/dmel-all-r6.42.gtf ~/reference/dm6.fa

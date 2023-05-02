@@ -76,11 +76,22 @@ ui <- shinyUI(
         )
       )
     ),
+     tabPanel(
+      "How to BindCompare",
+      icon = icon("table"), # Add a different icon to the second tab label
+      fluidPage(
+        # Insert input elements for Tab 2 here
+        titlePanel("Help Manual for BindCompare"),
+        mainPanel(
+            helpText("For a full how-to, please see the GitHub README!"),
+        )
+      )
+    ),
     footer = list(
       # Customize the footer with any relevant information or links
-      p("  Copyright © 2023"),
-      a("Github README!", href = "https://example.com/privacy"),
-      a("Created by Pranav Mahableshwarkar and the Larschan Lab", href = "https://example.com/terms")
+      p("Copyright © 2023"),
+      a("Github README!", href = "https://github.com/pranavmahabs/bindcompare/blob/main/README.md"),
+      a("Created by Pranav Mahableshwarkar and the Larschan Lab", href = "larschanlab.com")
     )
   )
 )

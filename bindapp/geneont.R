@@ -49,10 +49,12 @@ run_go <- function(output_dir, condition_string) {
 
   cols <- c("source", "term_name", "term_size", "intersection_size")
   outpath <- paste(output_dir, condition_string, "_GeneOntTable.pdf", sep = "")
+  cur_dev <- dev.cur()
   publish_gosttable(gostres_one,
     highlight_terms = (gostres_one$result[c(1:150), ])$term_id,
     use_colors = TRUE, show_columns = cols, filename = outpath
   )
+  dev.set(cur_dev)
 }
 
 run_go(opt$outdir, opt$expcondition)

@@ -9,71 +9,19 @@
 ###############
 
 import sys
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+from utils import process_bed, process_gtf, average_peak_size, within
 
-def process_bed(bedfile):
-    reference_peaks = {}
-    with open(bedfile) as table:
-        for line in table:
-            bed_row = line.split()
-            if (bed_row[0])[0:3] == "chr" or (bed_row[0])[0:3] == "Chr":
-                bed_row[0] = (bed_row[0])[3:]
-            if (bed_row[0])[0:2] == "Un" or (len(bed_row[0]) > 5) or (bed_row[0] == "chr"):
-                continue
-            else:
-                this_chrom = bed_row[0]
-                if not(str.isnumeric(bed_row[1])) or not(str.isnumeric(bed_row[2])):
-                    continue
-                elif this_chrom in reference_peaks:
-                    reference_peaks[this_chrom].append((bed_row[1], bed_row[2], bed_row[4]))
-                else:
-                    reference_peaks[this_chrom] = [(bed_row[1], bed_row[2], bed_row[4])]
-    return reference_peaks
+os.write(2, b"Beginning BindCompare!\n")
 
-def process_gtf(gene_file):
-    all_genes = {}
-    with open(gene_file) as table:
-        for line in table:
-            gtf_row = line.split()
-            if (gtf_row[0])[0:3] == "chr" or (gtf_row[0])[0:3] == "Chr":
-                gtf_row[0] = (gtf_row[0])[3:]
-            if (gtf_row[0])[0:2] == "Un" or (len(gtf_row[0]) > 6) or (gtf_row[0] == "chr"):
-                continue
-            else:
-                this_chrom = gtf_row[0]
-                # if not(str.isnumeric(bed_row[1])) or not(str.isnumeric(bed_row[2])):
-                #     continue
-                if this_chrom in all_genes:
-                    all_genes[this_chrom].append((gtf_row[9], gtf_row[3], gtf_row[4]))
-                else:
-                    all_genes[this_chrom] = [(gtf_row[9], gtf_row[3], gtf_row[4])]
-    return all_genes
-
-def average_peak_size(processed_bed):
-    total_sum, total_peaks = 0, 0
-    for chrom in processed_bed:
-        values = processed_bed[chrom]
-        total_sum = total_sum + sum((int(j) - int(i)) for (i, j, k) in values)
-        total_peaks = total_peaks + len(values)
-    return total_sum / total_peaks
-
-def within(exp_bind, ref_bind, scope):
-    midpoint = (int)((int(ref_bind[0]) + int(ref_bind[1])) / 2)
-    # Create the scope. 
-    overlap = range(max(int(exp_bind[0]), midpoint - scope), min(int(exp_bind[-2]), midpoint + scope)+1)
-    if len(overlap) == 0:
-        return overlap
-    else:
-        # Adjust to -1000 to 1000 base pair range. 
-        overlap = [x - midpoint for x in overlap]
-        return overlap
-# Track the number of within/overlap calls made by the below function. 
-within.counter = 0
-
+NUM_OVERLAPS = 0
+unique_ref_overlaps = set()
+unique_ola_overlaps = set()
 # If reference is "RNA", then rna_loci is the reference loci and vice versa.
-def compare_chrom_binds(dna_loci, rna_loci, reference, scope, count_more):
+def compare_chrom_binds(dna_loci, rna_loci, reference, scope):
     """
     Returns the integer locations on a -1000 to 1000 range for any overlaps for overall tabulation.
     Also returns a list of all chrom locations that had the overlap. 
@@ -103,41 +51,33 @@ def compare_chrom_binds(dna_loci, rna_loci, reference, scope, count_more):
             for exp_bind in exp_loci[chromosome]:
                 overlap = within(exp_bind, ref_bind, scope)
                 if len(overlap) == 0:
-                    # Insignificant p-value... continue if p-value is considered.
                     # No overlap in the binding sites... continue. 
                     continue
                 else:
-                    skip = False
-                    overlap_type = "None"
-                    ot = "None"
                     if exp_bind[0] >= ref_bind[0] and exp_bind[1] <= ref_bind[1]:
                         # The RNA peak is fully contained by the DNA peak
-                        within.counter = within.counter + 1
                         overlap_full.extend(overlap)
                         overlap_type = "Fully Contained"
                         ot = "OF"
                     elif exp_bind[1] > ref_bind[1] and exp_bind[0] <= ref_bind[1]:
                         # The RNA Peak overlaps the end of the DNA peak.
-                        within.counter = within.counter + 1
                         overlap_end.extend(overlap)
                         overlap_type = "Overlaps with End of Ref Peak"
                         ot = "OE"
                     elif exp_bind[0] < ref_bind[0] and exp_bind[1] >= ref_bind[0]:
                         # The RNA Peak overlaps the front of the DNA peak.
-                        within.counter = within.counter + 1
                         overlap_front.extend(overlap)
                         overlap_type = "Overlaps with Beg. of Ref Peak"
                         ot = "OB"
                     else:
-                        within.counter += 1
                         overlap_ext.extend(overlap)
-                        # skip = True
                         overlap_type = "Overlaps Outside of the Ref. Peak"
                         ot = "OX"
-                    if not skip:
-                        overlap_locs.append((chromosome, ref_bind[0], ref_bind[1], overlap_type, ot))
-                    if not count_more:
-                        break
+                    unique_ref_overlaps.add(ref_bind)
+                    unique_ola_overlaps.add(exp_bind)
+                    global NUM_OVERLAPS
+                    NUM_OVERLAPS += 1
+                    overlap_locs.append((chromosome, ref_bind[0], ref_bind[1], overlap_type, ot))
 
     return overlap_full, overlap_front, overlap_end, overlap_locs, overlap_ext
 
@@ -149,7 +89,7 @@ out_name = sys.argv[5]
 processed_base_bed = process_bed(base_bed)
 processed_overlay_bed = process_bed(overlay_bed)
 
-full_o, front_o, end_o, overlap_coords, ext_o = compare_chrom_binds(processed_base_bed, processed_overlay_bed, "DNA", int(scope), True)
+full_o, front_o, end_o, overlap_coords, ext_o = compare_chrom_binds(processed_base_bed, processed_overlay_bed, "DNA", int(scope))
 
 print(f'\nAverage Peak Sizes for {sample_name}:')
 print(f'Base BED File:      {average_peak_size(processed_base_bed)} base pairs.')
@@ -196,29 +136,29 @@ for olap in overlap_coords:
 fig1, ax1 = plt.subplots()
 
 def pie_fmt(x):
-    return '{:.0f}'.format((within.counter)*x/100)
+    return '{:.0f}'.format((NUM_OVERLAPS)*x/100)
 
 ax1.pie(counts, labels=categories, autopct=pie_fmt, startangle=90)
 ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-plt.title(f'Categorization of {within.counter} Found Overlaps', **hfont)
+plt.title(f'Categorization of {NUM_OVERLAPS} Found Overlaps', **hfont)
 outpath = out_name + "/" + sample_name + "_" + "pie.png"
 plt.savefig(outpath)
 plt.close()
 
-categories = ["Overlaps", "Total Binding Sites in Overlayed Bed"]
-num_rna = 0
+categories = ["Total\nBinding Peaks", "Unique Overlaps", "Total Number\nof Overlaps", "Reference\nPeaks Overlapped"]
+num_olay = 0
 for rna_chrom in processed_overlay_bed.keys():
-    num_rna = num_rna + len(processed_overlay_bed[rna_chrom])
-vals = [within.counter, num_rna]
-bars = plt.bar(categories, vals, color=['red', 'red'])
+    num_olay = num_olay + len(processed_overlay_bed[rna_chrom])
+vals = [num_olay, len(unique_ola_overlaps), NUM_OVERLAPS, len(unique_ref_overlaps)]
+bars = plt.bar(categories, vals, color=['mediumblue', 'sandybrown', 'lightgrey', 'cornflowerblue'])
 
 for bar in bars:
     yval = bar.get_height()
-    plt.text(bar.get_x() + 0.35, yval + .25, yval)
+    plt.text(bar.get_x() + 0.3, yval + .3, yval, wrap=True)
 
 plt.ylabel("")
 plt.xlabel("")
-plt.title('Total Number of Overlaps and Binding Sites in Overlayed Bed', **hfont)
+plt.title('Total Number of Overlaps and Binding Peaks in Overlayed Bed', **hfont)
 outpath = out_name + "/" + sample_name + "_" + "bartotals.png"
 plt.savefig(outpath)
 plt.close()
@@ -243,26 +183,36 @@ def find_fbgn(gtf, chrom, begin, end):
                 overlaps.add(to_add)
                 all_geneids.add(to_add)
         if len(overlaps) != 0:
-            found = ",".join(list(overlaps))
-        else:
-            find_fbgn.counting += 1
+            found = " ".join(list(overlaps))
         return found
     else:
         return found
-find_fbgn.counting = 0
 
 # overlap_locs.append((chromosome, ref_bind[0], ref_bind[1], overlap_type, ot))
-df = pd.DataFrame(overlap_coords, columns=["Chrom", "Begin Bind Site", "End Bind Site", "Full Overlap Type", "Abbr"])
-df['Fbgns'] = df.apply(lambda row: find_fbgn(gene_coords, row[0], row[1], row[2]), axis=1)
+df = pd.DataFrame(overlap_coords, columns=["Chrom", "Begin Bind Site", "End Bind Site", "Full Overlap Type", "Overlay_Type"])
 
 df = df.groupby(df.columns.tolist(),as_index=False).size()
 df.rename(columns={'size': 'Occurrences'}, inplace=True)
+df.drop(columns=['Full Overlap Type'])
+df['Occurrences'] = df['Occurrences'].apply(lambda x: str(x) + ",")
+df['Overlay_Type'] = df['Overlay_Type'].apply(lambda x: str(x) + ",")
+
+columns = ["Chrom", "Begin Bind Site", "End Bind Site", "Overlay Type", "Occurrences"]
+df = df.groupby(["Chrom", "Begin Bind Site", "End Bind Site"]).agg(
+     Overlay_Type = ('Overlay_Type','sum'),
+     Occurrences = ('Occurrences','sum'),
+     ).reset_index()
+
+df['Occurrences'] = df['Occurrences'].apply(lambda x: x[:-1])
+df['Overlay_Type'] = df['Overlay_Type'].apply(lambda x: x[:-1])
+df['Fbgns'] = df.apply(lambda row: find_fbgn(gene_coords, row['Chrom'], row['Begin Bind Site'], row['End Bind Site']), axis=1)
+
 outpath = out_name + "/" + sample_name + "_" + "overlaps.csv"
 df.to_csv(outpath)
 
 print("Here is a list of all Gene IDs in the overlaps CSV:")
 for gene in all_geneids:
-    print(gene, end=", ")
+    print(gene, end=" ")
 gene_arr = np.array(list(all_geneids))
 df = pd.DataFrame(gene_arr.reshape(len(gene_arr), -1), columns=["Gene ID"])
 print("\n")

@@ -8,10 +8,13 @@
 # Output: MEME/STREME Folder of Results, Overlaps.CSV, sequences.fasta.
 ###############
 
+import os
 import pandas as pd
 import pybedtools as bd
 import sys
 import subprocess
+
+os.write(2, b"Completed BED Merge... starting downstream analysis!\n")
 
 input_genes = sys.argv[1]
 df = pd.read_csv(input_genes)
@@ -41,8 +44,10 @@ fp.close()
 
 # Need to use STREME if num_sequences > 50:
 if len(df) > 50:
-    cmd_str = "streme -p " + fastapath + " --dna --oc " + outdir + "/motifanalysis 2> /dev/null"
+    cmd_str = "streme -p " + fastapath + " --dna --nmotifs 10 --oc " + outdir + "/motifanalysis 2> /dev/null"
 else:
     cmd_str = "meme -p" + fastapath +  " --dna --nmotifs 5 --maxw 50 --oc " + outdir + "/motifanalysis 2> /tmp/out.txt"
 # Run STREME or MEME and produce the motif analysis
 subprocess.run(cmd_str, shell=True, stdout=subprocess.DEVNULL)
+
+os.write(2, b"Finished Sequence Extraction and MEME/STREME... Beginning GO!\n")
