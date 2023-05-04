@@ -71,12 +71,12 @@ Below is a sample Overlap Profile. The overlaps are categorized into four main c
 
 This extended region is defined by the scope variable in the script, allowing the overlap to look for binding sites in the proximity of the DNA binding site (this scope is 2 kb including the DNA binding site). It should be noted that multiple RNA peaks can be found on one DNA peak. All of these overlaps are placed onto a [-scope, scope] region. Then, each type of overlap shown with a different color is overlaid and plotted onto a frequency plot. So, if the frequency at a given base pair is 5, then there are five overlaps that contained that base pair within the region defined by the scope.
 
-<img src="https://github.com/pranavmahabs/bindcompare/blob/main/SampleOut/S2_overlaps.png"  width="50%" height="50%">
+<img src="https://github.com/pranavmahabs/bindcompare/blob/main/SampleOut/S2_overlaps.png"  width="40%" height="40%">
 
 ### Bar Graph and Pie Chart
 Total Binding Peaks references the number of peaks or rows that are in the overlayed bed file. Unique overlaps references the number of unique peaks in the overlayed BED file that were found to overlap with a peak in the base/reference BED file. The total number of overlaps simply references how many times an RNA peak overlapped with a DNA peak. Note that there can be repeats here! Finally, the last column is the number of unique reference/base peaks that were found within an overlap. 
 
-![Bar Graph and Pie Chart for KC](https://github.com/pranavmahabs/bindcompare/blob/main/SampleOut/S2_bartotals.png)
+<img src="https://github.com/pranavmahabs/bindcompare/blob/main/SampleOut/S2_bartotals.png"  width="40%" height="40%">
 ### Summary File and CSV Output
 The CSV file contains one row for every reference peak that was involved in an overlap. This includes the Chromosome, Beginning/Ending Coordinate of the peak, the corresponding nucleotide sequence, the type of overlap (as described above), and the Gene IDs that correspond to that region. 
 
