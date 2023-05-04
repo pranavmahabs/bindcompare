@@ -17,7 +17,7 @@ Afterwards, Gene IDs and sequences are extracted from these sites. Then, Gene On
   ```
   ~/bindcompare $ conda env create -f environment.yml
   ```
-
+  If you are on an M1 device, you will have to use a Rosetta enabled terminal as many of these packages rely on an x86_64 architecture!
   2. Activate BindCompare environment using the following command:
   ```
   ~/bindcompare $ conda activate bindcompare
