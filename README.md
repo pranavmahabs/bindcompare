@@ -77,6 +77,7 @@ This extended region is defined by the scope variable in the script, allowing th
 Total Binding Peaks references the number of peaks or rows that are in the overlayed bed file. Unique overlaps references the number of unique peaks in the overlayed BED file that were found to overlap with a peak in the base/reference BED file. The total number of overlaps simply references how many times an RNA peak overlapped with a DNA peak. Note that there can be repeats here! Finally, the last column is the number of unique reference/base peaks that were found within an overlap. 
 
 <img src="https://github.com/pranavmahabs/bindcompare/blob/main/SampleOut/S2_bartotals.png"  width="40%" height="40%">
+
 ### Summary File and CSV Output
 The CSV file contains one row for every reference peak that was involved in an overlap. This includes the Chromosome, Beginning/Ending Coordinate of the peak, the corresponding nucleotide sequence, the type of overlap (as described above), and the Gene IDs that correspond to that region. 
 
