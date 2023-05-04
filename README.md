@@ -25,11 +25,19 @@ Afterwards, Gene IDs and sequences are extracted from these sites. Then, Gene On
 
   3. Then, to launch the RShiny Web Application, run the following command: 
   ```
-  ~/bindcompare $ R -e "shiny::runApp('bindapp’)”
+  ~/bindcompare $ ./run.sh
   ```
   This will print out an http:// link that you can copy and paste into your browser to run the appliation! This will look something like: "Listening on http://127.0.0.1:3868". 
   
   Do not terminate this process in your terminal until you are done running BindCompare. Status results from your experiments will appear here as you go. 
+
+  Note: If you get a permission denied error when running `./run.sh`, running `chmod +wx run.sh` should fix this issue!
+
+### Reference Files
+To run the script, you are required to provide a Genes GTF file and optionally a whole Genome FA file. If you are using the DM6 system, these files are provided - zipped - in the `reference_files` folder. To unzip them and use them, run the following command:
+```
+~/bindcompare/reference_files $ gunzip dm6.fa.gz; gunzip dmel-all-r6.46.gtf.gz
+```
 
 ## Navigating the RShiny
 
@@ -55,8 +63,19 @@ Note that this is not saved to your computer and you would need to take a Screen
 
 ## Understanding the Results
 ### Overlap Profile 
-![Overlap Profile for S2](https://github.com/pranavmahabs/bindcompare/blob/main/SampleOut/S2_overlaps.png)
+Below is a sample Overlap Profile. The overlaps are categorized into four main categories based upon the location of the overlap: 
+1. Completely overlapping (purple lines in frequency plot).
+2. Partially overlapping at the DNA peak start site (red lines in frequency plot).
+3. Partially overlapping at the DNA peak end site (blue lines in frequency plot) 
+4. Non-overlapping, i.e. when there is an overlap in a region outside the DNA binding site (yellow lines in frequency plot). 
+
+This extended region is defined by the scope variable in the script, allowing the overlap to look for binding sites in the proximity of the DNA binding site (this scope is 2 kb including the DNA binding site). It should be noted that multiple RNA peaks can be found on one DNA peak. All of these overlaps are placed onto a [-scope, scope] region. Then, each type of overlap shown with a different color is overlaid and plotted onto a frequency plot. So, if the frequency at a given base pair is 5, then there are five overlaps that contained that base pair within the region defined by the scope.
+
+<img src="https://github.com/pranavmahabs/bindcompare/blob/main/SampleOut/S2_overlaps.png"  width="50%" height="50%">
+
 ### Bar Graph and Pie Chart
+Total Binding Peaks references the number of peaks or rows that are in the overlayed bed file. Unique overlaps references the number of unique peaks in the overlayed BED file that were found to overlap with a peak in the base/reference BED file. The total number of overlaps simply references how many times an RNA peak overlapped with a DNA peak. Note that there can be repeats here! Finally, the last column is the number of unique reference/base peaks that were found within an overlap. 
+
 ![Bar Graph and Pie Chart for KC](https://github.com/pranavmahabs/bindcompare/blob/main/SampleOut/S2_bartotals.png)
 ### Summary File and CSV Output
 The CSV file contains one row for every reference peak that was involved in an overlap. This includes the Chromosome, Beginning/Ending Coordinate of the peak, the corresponding nucleotide sequence, the type of overlap (as described above), and the Gene IDs that correspond to that region. 
