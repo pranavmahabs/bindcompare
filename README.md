@@ -45,6 +45,13 @@ In the first tab of the RShiny, you will be able to run the core functionality o
 8. **Genome FA File Path:** A FA file with a corresponding fa.fai (index file) for BedTools to extract sequences of binding sites and perform motif analysis. Enter `None` to skip this feature!
 
 ### Comparing Two BindCompare Experiments
+When you run BindCompare with two BED Files, you will get a list of genes where there was a binding overlap. If you were to run BindCompare on say male samples and female samples, you would then have two lists of genes. You can copy and paste these two lists in to the input categories in the **Comparison Tab** in the RShiny interface and then click submit. These are the outputs from this analysis:
+
+1. Using the equation $J(A,B) = \frac{|A \cap B|}{|A \cup B|}$, the Jaccard Similarity Index is calculated and printed. 
+2. A size-biased venn diagram is also generated using the R-Eulerr package. 
+3. Gene lists are also printed from each of the following categories: Only List 1, Only List 2, Both List 1 and List 2.
+
+Note that this is not saved to your computer and you would need to take a Screenshot to save this result! Additionally, make sure to copy the list exactly as it is printed from the first tab. 
 
 ## Understanding the Results
 ### Overlap Profile 
