@@ -41,7 +41,7 @@ To run the script, you are required to provide a Genes GTF file and optionally a
 
 ## Navigating the RShiny
 
-### Comparing Two Bed File
+### Comparing Two Bed Files
 In the first tab of the RShiny, you will be able to run the core functionality of BindCompare. There are seven input boxes on the left that you will have to fill out before running the tool. 
 1. **BindCompare Directory Filepath:** Enter the directory that contains your copy of BindCompare. You can get this by running `pwd` in your Terminal/CL while in the `bindcompare` folder. 
 2. **Base Bed File Path:** Enter the file path for your reference BED file. If comparing DNA and RNA, then this should be the filepath for the DNA BED file or more generally, the BED file with the larger peak size. 
