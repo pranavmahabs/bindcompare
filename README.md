@@ -88,5 +88,5 @@ The summary file contains the average peak size for both of the BED files. Addit
 Gene Ontology results from GProfiler2 and motif analysis from either STREME or MEME or also included in this directory. Please see the [MEME Suite](https://meme-suite.org/meme/doc/streme.html) page for more information on MEME/STREME. Please see the [GProfiler2 Manual](https://cran.r-project.org/web/packages/gprofiler2/vignettes/gprofiler2.html) for more information on the Gene Ontology analysis! Feel free to copy the gene list into your GO tool of choice as well!
 
 ## Credits
-This was script was written at Brown University in the [Larschab Lab](larschanlab.com).
+This was script was written at Brown University in the [Larschan Lab](https://www.larschanlab.com).
 
