@@ -4,7 +4,7 @@ This is a novel DNA/RNA Integration tool meant to analyze the overlap between pr
 
 
 
-Oftentimes, regulation from factors occur within a larger locus surrounding the marked binding site. The script searches for overlaps between these binding sites in a chosen scope. 
+Oftentimes, co-regulation from factors occurs within a larger locus surrounding the marked binding site. The script searches for overlaps between these binding sites in a chosen scope. Because BindCompare utilizes BED files, it enables the comparison between RNA and DNA binding sites, aiding the study of system wide co-transcriptional regulation. 
 
 ![Illustration of Binding Site Overlapping in Scoped Region](https://github.com/pranavmahabs/bindcompare/blob/main/BindCompareDemo1.png)
 
