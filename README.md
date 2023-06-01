@@ -1,5 +1,7 @@
 # BindCompare
 
+**BindExplore Coming Soon:** a feature that will allow rapid discovery of co-regulators using an augmented interval tree by overlapping multiple BED files. 
+
 This is a novel DNA/RNA Integration tool meant to analyze the overlap between protein binding sites. The input data is in the form of peak-called BED files from programs such as MACS2 and SEACR.
 
 
