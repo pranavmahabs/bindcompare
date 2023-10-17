@@ -3,10 +3,12 @@ class Bed:
         self.bedfile = bedfile
         self.chroms = []
         self.loci = {}
+        self.num_peaks = 0
 
     def update_chroms(self, chrom: str, start: str, end: str):
         """Update the chroms and loci attributes. Cast start and end to int."""
         start, end = int(start), int(end)
+        self.num_peaks = self.num_peaks + 1
         if chrom not in self.chroms:
             self.chroms.append(chrom)
             self.loci[chrom] = [(start, end)]
@@ -42,6 +44,10 @@ class Bed:
         for chrom in chroms:
             loci[chrom] = self.loci[chrom]
         return loci
+
+    def get_chrom(self, chrom: str):
+        """Returns a list of loci for the given chromosome."""
+        return self.loci[chrom]
 
     def average_peak_size(self, chroms: list):
         """Returns the average peak size for the given chromosomes."""
@@ -99,11 +105,12 @@ class GTF:
             loci[chrom] = self.loci[chrom]
         return loci
 
-    def find_fbgn(self, chrom: str, begin: str, end: str, scope: int):
+    def find_fbgn(self, chrom: str, begin: str, end: str, scope: int, all_genes: set):
         """Returns the gene ID for the given chromosome, begin, and end."""
+        print(f"Finding FBGN for {chrom}:{begin}-{end}")
         overlaps = set()
-        begin = int(begin) - int(scope)
-        end = int(end) + int(scope)
+        begin = int(begin) - scope
+        end = int(end) + scope
         found = "Not in GTF"
         if chrom in self.loci:
             for genes in self.loci[chrom]:
@@ -114,6 +121,7 @@ class GTF:
                 ):
                     to_add = genes[0].replace('"', "").replace(";", "")
                     overlaps.add(to_add)
+                    all_genes.add(to_add)
             if len(overlaps) != 0:
                 found = " ".join(list(overlaps))
             return found
