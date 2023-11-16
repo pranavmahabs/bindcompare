@@ -43,7 +43,7 @@ server <- function(input, output, session) {
         HTML(paste(str2, str3, sep = '<br/>'))
       })
       output$overlap <- renderText("1) Binding Overlap Profile generated from your BED Files! 2) Number of Overlaps Found in Comparison to Total Number of Binding Sites.")
-      overlaps <- paste0(outdir(), "/", name(), "_overlaps.png")
+      overlaps <- paste0(outdir(), "/", name(), "_ref_freq.png")
       output$overlapprofile <- renderImage({list(src=overlaps)}, deleteFile=FALSE)
       bargraph <- paste0(outdir(), "/", name(), "_bartotals.png")
       output$bargraph <- renderImage({list(src=bargraph)}, deleteFile=FALSE)

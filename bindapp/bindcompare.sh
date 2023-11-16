@@ -20,8 +20,8 @@ if [ $# -ne 7 ]; then
         exit 1
 fi
 
-eval "$(conda shell.bash hook)"
-conda activate bindcompare
+# eval "$(conda shell.bash hook)"
+# conda activate bindcompare
 
 DNA=$1
 RNA=$2
@@ -32,7 +32,7 @@ GTF=$6
 FASTA=$7
 
 # echo "Beginning BindCompare! Any errors will be printed in the Summary File or Command Line."
-python3 merge.py ${DNA} ${RNA} ${SCOPE} ${SNAME} ${OUT} ${GTF} > ${OUT}/${SNAME}_summary.txt
+python3 merge.py ${DNA} ${RNA} ${SCOPE} ${SNAME} ${OUT}/ ${GTF} > ${OUT}/${SNAME}_summary.txt
 
 # # echo "Completed Merge, Beginning Downstream Analysis!"
 python3 downstream.py ${OUT}/${SNAME}_overlaps.csv ${FASTA} ${OUT} >> ${OUT}/${SNAME}_summary.txt
@@ -43,5 +43,7 @@ Rscript geneont.R --outdir ${OUT} --expcondition ${SNAME}>> ${OUT}/${SNAME}_summ
 echo "Completed BindCompare! Time Stamp:"
 date
 
+rm Rplots.pdf 2> /dev/null
+
 # EXAMPLE TERMINAL CODE
-# ./bindcompare.sh ~/CNR_bedfiles/KC_consensusPeaks.bed ~/iCLIP_bedfiles/Kc_ChF.bed 750 KC ~/bindcompare/KCSampleOut ~/reference/dmel-all-r6.42.gtf ~/reference/dm6.fa
+# ./bindcompare.sh ~/CNR_bedfiles/KC_consensusPeaks.bed ~/iCLIP_bedfiles/Kc_ChF.bed 1000 KC ~/bindcompare/KCSampleOut ~/reference/dmel-all-r6.42.gtf ~/reference/dm6.fa
