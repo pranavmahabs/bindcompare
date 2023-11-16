@@ -5,13 +5,30 @@ import pandas as pd
 from merge_class import Bed, GTF
 
 
+def moving_average(data, window_size):
+    smoothed_data = np.zeros_like(data)
+    half_window = window_size // 2
+
+    for i in range(half_window, len(data) - half_window):
+        smoothed_data[i] = np.mean(data[i - half_window : i + half_window + 1])
+
+    # Pad the edges of the smoothed data with initial and final values
+    for i in range(half_window):
+        smoothed_data[i] = np.mean(data[: i + half_window + 1])
+        smoothed_data[len(data) - 1 - i] = np.mean(
+            data[len(data) - i - half_window - 1 :]
+        )
+
+    return smoothed_data
+
+
 class Chromosome:
     def __init__(self, name: str, ref_binds: list, exp_binds: list, scope: int):
         self.chr = name
         self.ref_binds = ref_binds
         self.exp_binds = exp_binds
         self.scope = scope
-        self.overlap_counts = {"Total": 0, "OF": 0, "OE": 0, "OB": 0, "OX": 0}
+        self.overlap_counts = {"Total": 0, "OF": 0, "OE": 0, "OB": 0, "PK": 0}
         self.overlaps = []
         self.overlap_full = []
         self.overlap_front = []
@@ -68,7 +85,7 @@ class Chromosome:
                     else:
                         # The EXP Peak overlaps the REF peak externally.
                         self.overlap_ext.extend(overlap)
-                        ot = "OX"
+                        ot = "PK"
                     self.unique_ref_overlaps.add(ref_bind)
                     self.unique_ola_overlaps.add(exp_bind)
                     self.overlap_counts["Total"] += 1
@@ -132,10 +149,12 @@ class BindCompare:
         front_o = []
         end_o = []
         ext_o = []
-        overlap_counts = {"Total": 0, "OF": 0, "OE": 0, "OB": 0, "OX": 0}
+        overlap_counts = {"Total": 0, "OF": 0, "OE": 0, "OB": 0, "PK": 0}
         unique_ref_overlaps = set()
         unique_ola_overlaps = set()
         for chromosome in chromosomes:
+            if chromosome not in self.experiments:
+                continue
             olaps.extend(self.experiments[chromosome].overlaps)
             full_o.extend(self.experiments[chromosome].overlap_full)
             front_o.extend(self.experiments[chromosome].overlap_front)
@@ -179,7 +198,7 @@ class BindCompare:
         x, y = np.unique(
             bc_dict["ext"], return_counts=True
         )  # counting occurrence of each loan
-        ax1.scatter(x, y, s=5, c="y", marker="o", label="External Overlaps")
+        ax1.scatter(x, y, s=5, c="y", marker="o", label="Proximal Peaks")
 
         ax1.set_xlabel("Overlap of Binding Sites", **self.font)
         ax1.set_ylabel("Frequency", **self.font)
@@ -189,15 +208,20 @@ class BindCompare:
             f"Frequency of Binding Overlaps Over {2 * self.scope} Base Pair Range"
         )
 
-        plt.savefig(filepath + "_overlaps.png")
+        plt.savefig(filepath + "_overlaps.png", dpi=300)
         plt.close()
 
     def overlap_distribution_barplot(self, bc_dict: dict, filepath: str):
         """Takes the overlap counts and generates a single bar split by overlap category."""
         # Sample data generation
-        overlap_types = ["Full Overlap", "Front Overlap", "End Overlap", "Ext. Overlap"]
+        overlap_types = [
+            "Full Overlap",
+            "Front Overlap",
+            "End Overlap",
+            "Proximal Peak",
+        ]
         counts = bc_dict["overlap_counts"]
-        values = [counts["OF"], counts["OB"], counts["OE"], counts["OX"]]
+        values = [counts["OF"], counts["OB"], counts["OE"], counts["PK"]]
         total = sum(values)
         values = [val / total for val in values]
 
@@ -240,7 +264,7 @@ class BindCompare:
             left=0.05, right=0.85, top=0.9, bottom=0.1
         )  # Adjust the layout
 
-        plt.savefig(filepath + "_bardist.png", bbox_inches="tight")
+        plt.savefig(filepath + "_bardist.png", bbox_inches="tight", dpi=300)
         plt.close()
 
     def overlap_distribution_piechart(self, bc_dict: dict, filepath: str):
@@ -252,12 +276,12 @@ class BindCompare:
             "External Overlap",
         ]
 
-        abbr = ["OF", "OE", "OB", "OX"]
+        abbr = ["OF", "OE", "OB", "PK"]
         counts = [
             bc_dict["overlap_counts"]["OF"],
             bc_dict["overlap_counts"]["OE"],
             bc_dict["overlap_counts"]["OB"],
-            bc_dict["overlap_counts"]["OX"],
+            bc_dict["overlap_counts"]["PK"],
         ]
         total = sum(counts)
         fig1, ax1 = plt.subplots()
@@ -269,7 +293,7 @@ class BindCompare:
         ax1.axis("equal")
 
         plt.title(f"Categorization of {total} Found Overlaps", **self.font)
-        plt.savefig(filepath + "_pie.png")
+        plt.savefig(filepath + "_pie.png", dpi=300)
         plt.close()
 
     def overlap_bar_totals(self, bc_dict: dict, filepath: str):
@@ -299,7 +323,7 @@ class BindCompare:
         plt.ylabel("")
         plt.xlabel("")
         plt.title("Total Number of Overlaps and Binding Peaks in Overlayed Bed")
-        plt.savefig(filepath + "_barsummary.png")
+        plt.savefig(filepath + "_barsummary.png", dpi=300)
         plt.close()
 
     def generate_csv(self, bc_dict: dict, filepath: str, gtf: GTF = None):
@@ -357,9 +381,150 @@ class BindCompare:
             bc_dict["all_genes"] = all_genes
             gene_arr = np.array(list(all_genes))
             gdf = pd.DataFrame(gene_arr.reshape(len(gene_arr), -1), columns=["Gene ID"])
-            outpath = "gene_list.csv"
+            outpath = "/tmp/gene_list.csv"
             gdf.to_csv(outpath, index=False)
         df.to_csv(filepath + "_overlaps.csv", index=False)
+
+    def plot_perchrom_ref_peak(self, filepath: str):
+        """The same plot as plot_average_ref_peak but creates N subplots for each chromosome on one panel.
+        There will be at most 3 plots on each row and there will be however many rows needed to fit all the chromosomes.
+        """
+        # Determine Number of Chromosomes
+        chroms = list(self.experiments.keys())
+        Nchroms = len(chroms)
+
+        fig, axs = plt.subplots(
+            Nchroms, 1, sharex=True, sharey="all", figsize=(4, Nchroms + 3)
+        )
+        if Nchroms == 1:
+            axs = [axs]
+        else:
+            axs = axs.flatten()
+
+        for i in range(Nchroms):
+            chrom, ax = chroms[i], axs[i]
+            chrom_t: Chromosome = self.experiments[chrom]
+            num_peaks = len(chrom_t.ref_binds)
+            x = np.arange(-self.scope, self.scope + 1, 1)
+            y = np.zeros(2 * self.scope + 1)
+
+            chrom_dict = self.ref_bed.get_loci([chrom])
+            for binding_site in chrom_dict[chrom]:
+                midpoint = (binding_site[1] + binding_site[0]) / 2
+                start_index = int(binding_site[0] - midpoint + self.scope)
+                end_index = int(binding_site[1] - midpoint + self.scope)
+                y[start_index:end_index] += 1
+            y = y / num_peaks
+            ax.plot(x, y, label="Average Ref. Peak", c="k", alpha=0.7)
+            ax2 = ax.twinx()
+
+            data_arrays = [
+                chrom_t.overlap_full,
+                chrom_t.overlap_front,
+                chrom_t.overlap_end,
+                chrom_t.overlap_ext,
+            ]
+            colors = ["m", "r", "b", "y"]
+
+            for arr, color in zip(data_arrays, colors):
+                x, z = np.unique(arr, return_counts=True)
+                if len(arr) != 0:
+                    z = moving_average(z, 20)
+                ax2.plot(x, z, c=color, alpha=0.7)
+
+            if (i + 1) % Nchroms == 0:
+                ax.set_xlabel("Distance from Reference Peak Midpoint")
+            if i == int(Nchroms / 2):
+                ax.set_ylabel("Frequency of Reference Peaks")
+                ax2.set_ylabel("Overlaps Counts")
+            ax.set_title(f"Chromosome {chrom}")
+
+        # Create a custom legend outside the function
+        custom_legend = [
+            plt.Line2D([0], [0], color="k", lw=2, label="Average Ref. Peak"),
+            plt.Line2D([0], [0], color="m", lw=2, label="Complete Peak Overlap"),
+            plt.Line2D([0], [0], color="r", lw=2, label="Overlaps Ref Front"),
+            plt.Line2D([0], [0], color="b", lw=2, label="Overlaps Ref End"),
+            plt.Line2D([0], [0], color="y", lw=2, label="Proximal Peaks"),
+        ]
+        plt.legend(
+            handles=custom_legend,
+            loc="upper center",
+            bbox_to_anchor=(0.55, -0.5),
+            fancybox=True,
+            shadow=True,
+            fontsize=7,
+            ncol=3,
+        )
+        plt.subplots_adjust(bottom=0.4)
+        fig.suptitle(
+            "Per Chromosome Counts of Binding Overlaps\n Across Reference Binding Peak"
+        )
+        plt.tight_layout(rect=[0, 0, 1, 1])
+        plt.savefig(filepath + "_chrom_ref_freq.png", dpi=300)
+        plt.close()
+
+    def plot_average_ref_peak(self, bc_dict: dict, filepath: str):
+        """With the x-axis being -scope to scope, plot all the frequency of the reference peaks over this domain.
+        normalize the y-axis and make the plot a line curve."""
+
+        num_peaks = self.ref_bed.num_peaks
+        x = np.arange(-self.scope, self.scope + 1, 1)
+        y = np.zeros(2 * self.scope + 1)
+        chrom_dict = self.ref_bed.get_loci(self.ref_bed.get_chroms())
+        for chr in chrom_dict:
+            for binding_site in chrom_dict[chr]:
+                midpoint = (binding_site[1] + binding_site[0]) / 2
+                start_index = int(binding_site[0] - midpoint + self.scope)
+                end_index = int(binding_site[1] - midpoint + self.scope)
+                y[start_index:end_index] += 1
+        y = y / num_peaks
+        fig = plt.figure()
+        ax1 = fig.add_subplot(111)
+        ln1 = ax1.plot(x, y, label="Average Ref. Peak", c="k", alpha=0.7)
+
+        ax2 = ax1.twinx()
+        x, z = np.unique(bc_dict["full"], return_counts=True)
+        if len(z) != 0:
+            z = moving_average(z, 20)
+        ln2 = ax2.plot(x, z, c="m", label="Complete Peak Overlap", alpha=0.7)
+
+        x, z = np.unique(bc_dict["front"], return_counts=True)
+        if len(z) != 0:
+            z = moving_average(z, 20)
+        ln3 = ax2.plot(x, z, c="r", label="Overlap Ref Front", alpha=0.7)
+
+        x, z = np.unique(bc_dict["end"], return_counts=True)
+        if len(z) != 0:
+            z = moving_average(z, 20)
+        ln4 = ax2.plot(x, z, c="b", label="Overlaps Ref End", alpha=0.7)
+
+        x, z = np.unique(bc_dict["ext"], return_counts=True)
+        if len(z) != 0:
+            z = moving_average(z, 20)
+        ln5 = ax2.plot(x, z, c="y", label="Proximal Peaks", alpha=0.7)
+
+        lns = ln1 + ln2 + ln3 + ln4 + ln5
+        labs = [l.get_label() for l in lns]
+
+        plt.title("Counts of Binding Overlaps Over Average Reference Peak Profile")
+        plt.xlabel("Distance from Reference Peak Midpoint")
+        ax1.set_ylabel("Frequency of Reference Peaks")
+        ax2.set_ylabel("Overlaps Counts")
+
+        plt.legend(
+            lns,
+            labs,
+            loc="upper center",
+            bbox_to_anchor=(0.5, -0.1),
+            fancybox=True,
+            shadow=True,
+            fontsize=8,
+            ncol=3,
+        )
+        plt.tight_layout()
+        plt.savefig(filepath + "_ref_freq.png", dpi=300)
+        plt.close()
 
     def generate_summary(self, bc_dict: dict, filepath: str, gtf: GTF = None):
         with open(filepath + "_summary.txt", "w") as summary:
@@ -385,9 +550,11 @@ class BindCompare:
 
     def generate_all(self, bc_dict: dict, filepath: str, gtf: GTF = None):
         """Generates all the visualizations and csv files."""
-        self.scatter_overlap_freq(bc_dict, filepath)
+        # self.scatter_overlap_freq(bc_dict, filepath)
         self.overlap_distribution_barplot(bc_dict, filepath)
         self.overlap_distribution_piechart(bc_dict, filepath)
+        self.plot_average_ref_peak(bc_dict, filepath)
+        self.plot_perchrom_ref_peak(filepath)
         self.overlap_bar_totals(bc_dict, filepath)
         self.generate_csv(bc_dict, filepath, gtf)
         self.generate_summary(bc_dict, filepath)

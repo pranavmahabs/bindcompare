@@ -107,7 +107,7 @@ class GTF:
 
     def find_fbgn(self, chrom: str, begin: str, end: str, scope: int, all_genes: set):
         """Returns the gene ID for the given chromosome, begin, and end."""
-        print(f"Finding FBGN for {chrom}:{begin}-{end}")
+        # print(f"Finding FBGN for {chrom}:{begin}-{end}")
         overlaps = set()
         begin = int(begin) - scope
         end = int(end) + scope

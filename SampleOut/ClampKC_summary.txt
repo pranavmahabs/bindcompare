@@ -1,0 +1,8 @@
+
+Average Peak Sizes for ClampKC:
+Base BED File:      449.8631399581752 base pairs.
+Overlayed BED File: 54.68819599109131 base pairs.
+verlaps: 402
+Total Number of Reference Peaks Overlapped: 142
+pdf 
+  2 
