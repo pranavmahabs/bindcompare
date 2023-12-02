@@ -6,7 +6,10 @@ This is a novel DNA/RNA Integration tool meant to analyze the overlap between pr
 
 Oftentimes, co-regulation from factors occurs within a larger locus surrounding the marked binding site. The script searches for overlaps between these binding sites in a chosen scope. Because BindCompare utilizes BED files, it enables the comparison between RNA and DNA binding sites, aiding the study of system wide co-transcriptional regulation. 
 
-![Illustration of Binding Site Overlapping in Scoped Region](https://github.com/pranavmahabs/bindcompare/blob/main/BindCompareDemo1.png)
+<!-- ![Illustration of Binding Site Overlapping in Scoped Region](https://github.com/pranavmahabs/bindcompare/blob/main/BindCompareDemo1.png) -->
+<p align="center">
+  <img src="https://github.com/pranavmahabs/bindcompare/blob/main/BindCompareDemo1.png" width="50%" height="50%">
+</p>
 
 As we can see in this diagram, there are two main categories of overlaps that can be found from two BED Files. When you run the program, you will choose one BED file to the reference, or base, BED file and one BED File to be overlayed. The first time are complete overlaps in peak sites which can be seen in the right half of the drawing. BindCompare also looks for overlaps upstream and downstream of the reference peak. On the left half of the drawing, we see that there is an overlap outside of the direct binding site. These categories are further broken down and are explained in the Results category. 
 
