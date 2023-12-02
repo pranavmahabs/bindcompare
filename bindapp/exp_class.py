@@ -73,19 +73,19 @@ class Chromosome:
                     if exp_bind[0] >= ref_bind[0] and exp_bind[1] <= ref_bind[1]:
                         # The EXP peak is fully contained by the REF peak
                         self.overlap_full.extend(overlap)
-                        ot = "OF"
+                        ot = "FO"
                     elif exp_bind[1] > ref_bind[1] and exp_bind[0] <= ref_bind[1]:
                         # The EXP Peak overlaps the end of the REF peak.
                         self.overlap_end.extend(overlap)
-                        ot = "OE"
+                        ot = "EO"
                     elif exp_bind[0] < ref_bind[0] and exp_bind[1] >= ref_bind[0]:
                         # The EXP Peak overlaps the front of the REF peak.
                         self.overlap_front.extend(overlap)
-                        ot = "OB"
+                        ot = "FRO"
                     else:
                         # The EXP Peak overlaps the REF peak externally.
                         self.overlap_ext.extend(overlap)
-                        ot = "PK"
+                        ot = "PXP"
                     self.unique_ref_overlaps.add(ref_bind)
                     self.unique_ola_overlaps.add(exp_bind)
                     self.overlap_counts["Total"] += 1
