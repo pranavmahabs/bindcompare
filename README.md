@@ -1,7 +1,8 @@
-# BindCompare
+<p align="center">
+  <img src="https://github.com/pranavmahabs/bindcompare/blob/main/bclogo.png" width="50%" height="50%">
+</p>
 
 This is a novel DNA/RNA Integration tool meant to analyze the overlap between protein binding sites. The input data is in the form of peak-called BED files from programs such as MACS2 and SEACR. If you are interested in selecting candidate co-regulators from a set of BED files, please go down to the [BindExplore](#BindExplore) section. 
-
 
 Oftentimes, co-regulation from factors occurs within a larger locus surrounding the marked binding site. The script searches for overlaps between these binding sites in a chosen scope. Because BindCompare utilizes BED files, it enables the comparison between RNA and DNA binding sites, aiding the study of system wide co-transcriptional regulation. 
 
@@ -71,16 +72,18 @@ Below is a sample Overlap Profile. The overlaps are categorized into four main c
 
 This extended region is defined by the scope variable in the script, allowing the overlap to look for binding sites in the proximity of the DNA binding site (this scope is 2 kb including the DNA binding site). It should be noted that multiple RNA peaks can be found on one DNA peak. All of these overlaps are placed onto a [-scope, scope] region. Then, each type of overlap shown with a different color is overlaid and plotted onto a frequency plot. So, if the frequency at a given base pair is 5, then there are five overlaps that contained that base pair within the region defined by the scope. 
 
+<p align="center">
 <img src="https://github.com/pranavmahabs/bindcompare/blob/main/SampleOut/ClampKC_ref_freq.png"  width="40%" height="40%">
+</p>
 
-Oftentimes, it can be valuable to see **where** this split is occurring! The values derived for the above plot can be split over all chromsomes (and is clearly the X-chromosome in this case):
-
-<img src="https://github.com/pranavmahabs/bindcompare/blob/main/SampleOut/ClampKC_chrom_ref_freq.png" width="15%" height="15%">
+Oftentimes, it can be valuable to see **where** this split is occurring! The values derived for the above plot can be [split over all chromsomes](https://github.com/pranavmahabs/bindcompare/blob/main/SampleOut/ClampKC_chrom_ref_freq.png).
 
 ### Bar Graph and Pie Chart
 Total Binding Peaks references the number of peaks or rows that are in the overlayed bed file. Unique overlaps references the number of unique peaks in the overlayed BED file that were found to overlap with a peak in the base/reference BED file. The total number of overlaps simply references how many times an RNA peak overlapped with a DNA peak. Note that there can be repeats here! Finally, the last column is the number of unique reference/base peaks that were found within an overlap. 
 
+<p align="center">
 <img src="https://github.com/pranavmahabs/bindcompare/blob/main/SampleOut/ClampKC_barsummary.png"  width="40%" height="40%">
+</p>
 
 ### Summary File and CSV Output
 The CSV file contains one row for every reference peak that was involved in an overlap. This includes the Chromosome, Beginning/Ending Coordinate of the peak, the corresponding nucleotide sequence, the type of overlap (as described above), and the Gene IDs that correspond to that region. 
@@ -107,9 +110,11 @@ $ Is everything okay? Enter 'yes' to continue or 'no' to cancel: yes
 ```
 The `scope` value essentially bins the genome into bins of size `scope`. Then, it uses this size to search for overlaps within each bin. Then a heatma is generated to visualize binding overlaps and can be seen below. The math for each cell is as follows: 
 
-<p style="text-align: center;">$\frac{\text{Num Ref Binds found in Overlayed Sites}}{\text{Num Ref Binds}}$</p>
+$\frac{\text{Num Ref Binds found in Overlayed Sites}}{\text{Num Ref Binds}}$
 
+<p align="center">
 <img src="https://github.com/pranavmahabs/bindcompare/blob/main/bindexplore/explore.png" width="50%" height="50%">
+</p>
 In this example, we see that we are comparing CLAMP binding in KC and S2 Cells, GAF Binding, and MLE Binding. Understandably, CLAMP KC and S2 has a significant overlap! 
 
 ## Credits
