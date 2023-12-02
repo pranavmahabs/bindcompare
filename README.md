@@ -1,9 +1,6 @@
 # BindCompare
 
-**BindExplore Coming Soon:** a feature that will allow rapid discovery of co-regulators using an augmented interval tree by overlapping multiple BED files. 
-
-This is a novel DNA/RNA Integration tool meant to analyze the overlap between protein binding sites. The input data is in the form of peak-called BED files from programs such as MACS2 and SEACR.
-
+This is a novel DNA/RNA Integration tool meant to analyze the overlap between protein binding sites. The input data is in the form of peak-called BED files from programs such as MACS2 and SEACR. If you are interested in selecting candidate co-regulators from a set of BED files, please scroll down to the BindExplore section. 
 
 
 Oftentimes, co-regulation from factors occurs within a larger locus surrounding the marked binding site. The script searches for overlaps between these binding sites in a chosen scope. Because BindCompare utilizes BED files, it enables the comparison between RNA and DNA binding sites, aiding the study of system wide co-transcriptional regulation. 
@@ -88,6 +85,28 @@ The summary file contains the average peak size for both of the BED files. Addit
 
 ### Other Outputs!
 Gene Ontology results from GProfiler2 and motif analysis from either STREME or MEME or also included in this directory. Please see the [MEME Suite](https://meme-suite.org/meme/doc/streme.html) page for more information on MEME/STREME. Please see the [GProfiler2 Manual](https://cran.r-project.org/web/packages/gprofiler2/vignettes/gprofiler2.html) for more information on the Gene Ontology analysis! Feel free to copy the gene list into your GO tool of choice as well!
+
+# BindExplore
+If you are interested in taking N BED files for N different binding experiments, you can visualize pair-wise binding overlaps across all experiments to select candidate pairs for BindCompare. This script, right now, can only be run from the terminal:
+
+```
+$ ./bindexplore.sh
+$ Enter BED File Paths (Space-Separated): CLAMP_KC_DNA.bed CLAMP_S2_DNA.bed gaf_chip.bed MLE_DNA.bed
+Provided BED File Paths:
+CLAMP_KC_DNA.bed
+CLAMP_S2_DNA.bed
+gaf_chip.bed
+MLE_DNA.bed
+$ Enter the scope: 5000
+Scope: 5000
+$ Is everything okay? Enter 'yes' to continue or 'no' to cancel: yes
+```
+The `scope` value essentially bins the genome into bins of size `scope`. Then, it uses this size to search for overlaps within each bin. Then a heatma is generated to visualize binding overlaps and can be seen below. The math for each cell is as follows: 
+
+<p style="text-align: center;">$\frac{\text{Num Ref Binds found in Overlayed Sites}}{\text{Num Ref Binds}}$</p>
+
+<img src="https://github.com/pranavmahabs/bindcompare/blob/main/bindexplore/explore.png" width="50%" height="50%">
+In this example, we see that we are comparing CLAMP binding in KC and S2 Cells, GAF Binding, and MLE Binding. Understandably, CLAMP KC and S2 has a significant overlap! 
 
 ## Credits
 This was script was written at Brown University in the [Larschan Lab](https://www.larschanlab.com).
