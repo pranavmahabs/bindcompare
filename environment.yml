@@ -4,13 +4,10 @@ channels:
   - bioconda
   - defaults
 dependencies:
-  - pybedtools
   - bedtools
   - r-gprofiler2
+  - customtkinter
   - meme
   - matplotlib-base
   - r-optparse
-  - r-shiny
-  - r-shinythemes
   - samtools
-  - r-eulerr

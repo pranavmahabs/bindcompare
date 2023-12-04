@@ -28,7 +28,7 @@ class Chromosome:
         self.ref_binds = ref_binds
         self.exp_binds = exp_binds
         self.scope = scope
-        self.overlap_counts = {"Total": 0, "OF": 0, "OE": 0, "OB": 0, "PK": 0}
+        self.overlap_counts = {"Total": 0, "CRO": 0, "ORE": 0, "ORF": 0, "PXP": 0}
         self.overlaps = []
         self.overlap_full = []
         self.overlap_front = []
@@ -73,15 +73,15 @@ class Chromosome:
                     if exp_bind[0] >= ref_bind[0] and exp_bind[1] <= ref_bind[1]:
                         # The EXP peak is fully contained by the REF peak
                         self.overlap_full.extend(overlap)
-                        ot = "FO"
+                        ot = "CRO"
                     elif exp_bind[1] > ref_bind[1] and exp_bind[0] <= ref_bind[1]:
                         # The EXP Peak overlaps the end of the REF peak.
                         self.overlap_end.extend(overlap)
-                        ot = "EO"
+                        ot = "ORE"
                     elif exp_bind[0] < ref_bind[0] and exp_bind[1] >= ref_bind[0]:
                         # The EXP Peak overlaps the front of the REF peak.
                         self.overlap_front.extend(overlap)
-                        ot = "FRO"
+                        ot = "ORF"
                     else:
                         # The EXP Peak overlaps the REF peak externally.
                         self.overlap_ext.extend(overlap)
@@ -149,7 +149,7 @@ class BindCompare:
         front_o = []
         end_o = []
         ext_o = []
-        overlap_counts = {"Total": 0, "OF": 0, "OE": 0, "OB": 0, "PK": 0}
+        overlap_counts = {"Total": 0, "CRO": 0, "ORE": 0, "ORF": 0, "PXP": 0}
         unique_ref_overlaps = set()
         unique_ola_overlaps = set()
         for chromosome in chromosomes:
@@ -183,22 +183,22 @@ class BindCompare:
         x, y = np.unique(
             bc_dict["full"], return_counts=True
         )  # counting occurrence of each loan
-        ax1.scatter(x, y, s=10, c="m", marker="s", label="Complete Peak Overlap")
+        ax1.scatter(x, y, s=10, c="m", marker="s", label="Complete Peak Overlap (CRO)")
 
         x, y = np.unique(
             bc_dict["front"], return_counts=True
         )  # counting occurrence of each loan
-        ax1.scatter(x, y, s=5, c="r", marker="o", label="Overlap Ref Front")
+        ax1.scatter(x, y, s=5, c="r", marker="o", label="Overlap Ref Front (ORF)")
 
         x, y = np.unique(
             bc_dict["end"], return_counts=True
         )  # counting occurrence of each loan
-        ax1.scatter(x, y, s=5, c="b", marker="o", label="Overlaps Ref End")
+        ax1.scatter(x, y, s=5, c="b", marker="o", label="Overlaps Ref End (ORE)")
 
         x, y = np.unique(
             bc_dict["ext"], return_counts=True
         )  # counting occurrence of each loan
-        ax1.scatter(x, y, s=5, c="y", marker="o", label="Proximal Peaks")
+        ax1.scatter(x, y, s=5, c="y", marker="o", label="Proximal Peaks (PXP)")
 
         ax1.set_xlabel("Overlap of Binding Sites", **self.font)
         ax1.set_ylabel("Frequency", **self.font)
@@ -215,13 +215,13 @@ class BindCompare:
         """Takes the overlap counts and generates a single bar split by overlap category."""
         # Sample data generation
         overlap_types = [
-            "Full Overlap",
-            "Front Overlap",
-            "End Overlap",
-            "Proximal Peak",
+            "Full Overlap (CRO)",
+            "Front Overlap (ORF)",
+            "End Overlap (ORE)",
+            "Proximal Peak (PXP)",
         ]
         counts = bc_dict["overlap_counts"]
-        values = [counts["OF"], counts["OB"], counts["OE"], counts["PK"]]
+        values = [counts["CRO"], counts["ORF"], counts["ORE"], counts["PXP"]]
         total = sum(values)
         values = [val / total for val in values]
 
@@ -271,17 +271,16 @@ class BindCompare:
         """Takes the overlap counts and generates a pie chart split by overlap category."""
         categories = [
             "Complete Overlap",
-            "Partial Overlap Front",
-            "Partial Overlap End",
-            "External Overlap",
+            "Overlap Ref. Front",
+            "Overlap Ref. End",
+            "Proximal Peak",
         ]
 
-        abbr = ["OF", "OE", "OB", "PK"]
         counts = [
-            bc_dict["overlap_counts"]["OF"],
-            bc_dict["overlap_counts"]["OE"],
-            bc_dict["overlap_counts"]["OB"],
-            bc_dict["overlap_counts"]["PK"],
+            bc_dict["overlap_counts"]["CRO"],
+            bc_dict["overlap_counts"]["ORF"],
+            bc_dict["overlap_counts"]["ORE"],
+            bc_dict["overlap_counts"]["PXP"],
         ]
         total = sum(counts)
         fig1, ax1 = plt.subplots()
@@ -298,7 +297,7 @@ class BindCompare:
 
     def overlap_bar_totals(self, bc_dict: dict, filepath: str):
         categories = [
-            "Total\nBinding Peaks",
+            "Total Exp.\nBinding Peaks",
             "Unique Overlaps",
             "Total Number\nof Overlaps",
             "Reference\nPeaks Overlapped",
@@ -442,10 +441,10 @@ class BindCompare:
         # Create a custom legend outside the function
         custom_legend = [
             plt.Line2D([0], [0], color="k", lw=2, label="Average Ref. Peak"),
-            plt.Line2D([0], [0], color="m", lw=2, label="Complete Peak Overlap"),
-            plt.Line2D([0], [0], color="r", lw=2, label="Overlaps Ref Front"),
-            plt.Line2D([0], [0], color="b", lw=2, label="Overlaps Ref End"),
-            plt.Line2D([0], [0], color="y", lw=2, label="Proximal Peaks"),
+            plt.Line2D([0], [0], color="m", lw=2, label="CRO"),
+            plt.Line2D([0], [0], color="r", lw=2, label="ORF"),
+            plt.Line2D([0], [0], color="b", lw=2, label="ORE"),
+            plt.Line2D([0], [0], color="y", lw=2, label="PXP"),
         ]
         plt.legend(
             handles=custom_legend,
@@ -487,22 +486,22 @@ class BindCompare:
         x, z = np.unique(bc_dict["full"], return_counts=True)
         if len(z) != 0:
             z = moving_average(z, 20)
-        ln2 = ax2.plot(x, z, c="m", label="Complete Peak Overlap", alpha=0.7)
+        ln2 = ax2.plot(x, z, c="m", label="Complete Ref Overlap (CRO)", alpha=0.7)
 
         x, z = np.unique(bc_dict["front"], return_counts=True)
         if len(z) != 0:
             z = moving_average(z, 20)
-        ln3 = ax2.plot(x, z, c="r", label="Overlap Ref Front", alpha=0.7)
+        ln3 = ax2.plot(x, z, c="r", label="Overlap Ref Front (ORF)", alpha=0.7)
 
         x, z = np.unique(bc_dict["end"], return_counts=True)
         if len(z) != 0:
             z = moving_average(z, 20)
-        ln4 = ax2.plot(x, z, c="b", label="Overlaps Ref End", alpha=0.7)
+        ln4 = ax2.plot(x, z, c="b", label="Overlaps Ref End (ORE)", alpha=0.7)
 
         x, z = np.unique(bc_dict["ext"], return_counts=True)
         if len(z) != 0:
             z = moving_average(z, 20)
-        ln5 = ax2.plot(x, z, c="y", label="Proximal Peaks", alpha=0.7)
+        ln5 = ax2.plot(x, z, c="y", label="Proximal Peaks (PXP)", alpha=0.7)
 
         lns = ln1 + ln2 + ln3 + ln4 + ln5
         labs = [l.get_label() for l in lns]

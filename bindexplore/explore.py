@@ -1,9 +1,6 @@
 import numpy as np
-import pandas as pd
-import pybedtools as pbt
 
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 from multiprocessing import Process, Manager, Pool, cpu_count
 import sys
@@ -30,8 +27,6 @@ class BedProcessor:
         return name
 
     def process_bed(self, bin_size: int):
-        # bed_obj = pbt.BedTool(self.bed_file)
-
         with open(self.bed_file) as bed_obj:
             for line in bed_obj:
                 bed_row = line.split()
@@ -107,11 +102,11 @@ class ProcessManager:
 
         # Create the Correlation Matrix
         plt.title(
-            "Generalized Binding Overlap of Multiple Transcription Factors",
-            fontsize=14.5,
+            "Pair-wise Binding Overlap Frequencies",
+            fontsize=16,
         )
-        plt.xlabel("Reference Transcription Factor", fontsize=12)
-        plt.ylabel("Overlapped Transcription Factors", fontsize=12)
+        plt.xlabel("Reference Transcription Factor", fontsize=13)
+        plt.ylabel("Overlapped Transcription Factors", fontsize=13)
         plt.savefig("explore.png")
 
 

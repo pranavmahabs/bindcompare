@@ -32,13 +32,13 @@ GTF=$6
 FASTA=$7
 
 # echo "Beginning BindCompare! Any errors will be printed in the Summary File or Command Line."
-python3 merge.py ${DNA} ${RNA} ${SCOPE} ${SNAME} ${OUT}/ ${GTF} > ${OUT}/${SNAME}_summary.txt
+python3 bindapp/merge.py ${DNA} ${RNA} ${SCOPE} ${SNAME} ${OUT}/ ${GTF} > ${OUT}/${SNAME}_summary.txt
 
 # # echo "Completed Merge, Beginning Downstream Analysis!"
-python3 downstream.py ${OUT}/${SNAME}_overlaps.csv ${FASTA} ${OUT} >> ${OUT}/${SNAME}_summary.txt
+python3 bindapp/downstream.py ${OUT}/${SNAME}_overlaps.csv ${FASTA} ${OUT} >> ${OUT}/${SNAME}_summary.txt
 
 # # echo "Finished Motif Analysis, Beginning Gene Ontology!"
-Rscript geneont.R --outdir ${OUT} --expcondition ${SNAME}>> ${OUT}/${SNAME}_summary.txt
+Rscript bindapp/geneont.R --outdir ${OUT} --expcondition ${SNAME}
 
 echo "Completed BindCompare! Time Stamp:"
 date

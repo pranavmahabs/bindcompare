@@ -1,3 +1,3 @@
 ## RUN BINDCOMPARE!! ##
 echo "Launching BindCompare App"
-R -e "shiny::runApp('bindapp')"
+python3 bindapp/bcapp.py
