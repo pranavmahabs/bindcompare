@@ -20,18 +20,19 @@ Afterwards, Gene IDs and sequences are extracted from these sites. Then, Gene On
   ```
   ~/home $ git clone https://github.com/pranavmahabs/bindcompare.git
   ```
-  1. Install the conda environment using the following command in your BindCompare directory:
+  2. Install the conda environment using the following command in your BindCompare directory:
   ```
-  ~/bindcompare $ conda env create -f environment.yml
+  ~/home $ cd bindcompare
+  ~/home/bindcompare $ conda env create -f environment.yml
   ```
   If you are on an M1 device, you will have to use a Rosetta enabled terminal as many of these packages rely on an x86_64 architecture!
   
-  2. Activate BindCompare environment using the following command:
+  3. Activate BindCompare environment using the following command:
   ```
   ~/bindcompare $ conda activate bindcompare
   ```
 
-  3. Then, to launch the BindCompare app, run the following command: 
+  4. Then, to launch the BindCompare app, run the following command: 
   ```
   ~/bindcompare $ ./run.sh
   ```
