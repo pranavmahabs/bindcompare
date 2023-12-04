@@ -31,9 +31,7 @@ Afterwards, Gene IDs and sequences are extracted from these sites. Then, Gene On
   ```
   ~/bindcompare $ ./run.sh
   ```
-  This will print out an http:// link that you can copy and paste into your browser to run the appliation! This will look something like: "Listening on http://127.0.0.1:3868". 
-  
-  Do not terminate this process in your terminal until you are done running BindCompare. Status results from your experiments will appear here as you go. 
+  This should launch the application in a separate window. The status results from your experiments will appear in the **terminal** as you go. 
 
   Note: If you get a permission denied error when running `./run.sh`, running `chmod +wx run.sh` should fix this issue!
 
@@ -43,18 +41,17 @@ To run the script, you are required to provide a Genes GTF file and optionally a
 ~/bindcompare/reference_files $ gunzip dm6.fa.gz; gunzip dmel-all-r6.46.gtf.gz
 ```
 
-## Navigating the RShiny
+## Navigating the Tkinter Application
 
 ### Comparing Two Bed Files
-In the first tab of the RShiny, you will be able to run the core functionality of BindCompare. There are seven input boxes on the left that you will have to fill out before running the tool. 
-1. **BindCompare Directory Filepath:** Enter the directory that contains your copy of BindCompare. You can get this by running `pwd` in your Terminal/CL while in the `bindcompare` folder. 
-2. **Base Bed File Path:** Enter the file path for your reference BED file. If comparing DNA and RNA, then this should be the filepath for the DNA BED file or more generally, the BED file with the larger peak size. 
-3. **Overlayed Bed File Path:** Enter the file path for your overlayed BED file. Conversely, when applicable, this would be the BED file with the smaller peak size. 
-4. **Scope:** The scope is how many nucleotides upstream and downstream from the reference peak's center that BindCompare will search for an overlap. Making this value smaller will decrease the number of overlaps and vice versa. 
-5. **Sample Name:** A short phrase to label the experiment (i.e. CLAMP)
-6. **Output Folder:** An existing folder's file path where all of the outputs will be generated. 
-7. **Genes GTF File:** This file details the chrom location of every gene in your organism. The GTF file for D. Melanogaster is provided (gzipped) in the reference category. 
-8. **Genome FA File Path:** A FA file with a corresponding fa.fai (index file) for BedTools to extract sequences of binding sites and perform motif analysis. Enter `None` to skip this feature!
+In the first frame of the app, you will be able to run the core functionality of BindCompare. There are seven input boxes on the left that you will have to fill out before running the tool. 
+1. **Base Bed File Path:** Enter the file path for your reference BED file. If comparing DNA and RNA, then this should be the filepath for the DNA BED file or more generally, the BED file with the larger peak size. 
+2. **Overlayed Bed File Path:** Enter the file path for your overlayed BED file. Conversely, when applicable, this would be the BED file with the smaller peak size. 
+3. **Scope:** The scope is how many nucleotides upstream and downstream from the reference peak's center that BindCompare will search for an overlap. Making this value smaller will decrease the number of overlaps and vice versa. 
+4. **Sample Name:** A short phrase to label the experiment (i.e. CLAMP)
+5. **Output Folder:** An existing folder's file path where all of the outputs will be generated. 
+6. **Genes GTF File:** This file details the chrom location of every gene in your organism. The GTF file for D. Melanogaster is provided (gzipped) in the reference category. 
+7. **Genome FA File Path:** A FA file with a corresponding fa.fai (index file) for BedTools to extract sequences of binding sites and perform motif analysis. Enter `None` to skip this feature!
 
 ### Comparing Two BindCompare Experiments
 When you run BindCompare with two BED Files, you will get a list of genes where there was a binding overlap. If you were to run BindCompare on say male samples and female samples, you would then have two lists of genes. You can copy and paste these two lists in to the input categories in the **Comparison Tab** in the RShiny interface and then click submit. These are the outputs from this analysis:
@@ -121,5 +118,5 @@ $\frac{\text{Num Ref Binds found in Overlayed Sites}}{\text{Num Ref Binds}}$
 In this example, we see that we are comparing CLAMP binding in KC and S2 Cells, GAF Binding, and MLE Binding. Understandably, CLAMP KC and S2 has a significant overlap! 
 
 ## Credits
-This was script was written at Brown University in the [Larschan Lab](https://www.larschanlab.com).
+This was script was written at Brown University in the [Larschan Lab](https://www.larschanlab.com) by Pranav Mahableshwarkar.
 
