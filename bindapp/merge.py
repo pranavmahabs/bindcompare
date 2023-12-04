@@ -58,4 +58,4 @@ exp.compare_binds()
 bc = exp.get_experiments_overlaps(b_chroms)
 
 # Perform all Plotting
-exp.generate_all(bc, out_name + sample_name, gtf)
+exp.generate_all(bc, out_name, sample_name, gtf)

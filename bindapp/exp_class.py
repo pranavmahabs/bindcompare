@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import pandas as pd
 from merge_class import Bed, GTF
+import os
 
 
 def moving_average(data, window_size):
@@ -325,7 +326,9 @@ class BindCompare:
         plt.savefig(filepath + "_barsummary.png", dpi=300)
         plt.close()
 
-    def generate_csv(self, bc_dict: dict, filepath: str, gtf: GTF = None):
+    def generate_csv(
+        self, bc_dict: dict, filepath: str, outdir: str, name: str, gtf: GTF = None
+    ):
         df = pd.DataFrame(
             bc_dict["overlaps"],
             columns=[
@@ -384,6 +387,14 @@ class BindCompare:
             gdf.to_csv(outpath, index=False)
         df.to_csv(filepath + "_overlaps.csv", index=False)
 
+        ## Create Separate CSVs for Each Overlap Type
+        path = os.path.join(outdir, "CategorizedCSVs")
+        os.makedirs(path, exist_ok=True)
+        for type_o in ["CRO", "ORF", "ORE", "PXP"]:
+            result = df[df["Overlay_Type"].apply(lambda x: type_o in x)]
+            path2 = os.path.join(path, type_o + f"_{name}_overlaps.csv")
+            result.to_csv(path2, index=False)
+
     def plot_perchrom_ref_peak(self, filepath: str):
         """The same plot as plot_average_ref_peak but creates N subplots for each chromosome on one panel.
         There will be at most 3 plots on each row and there will be however many rows needed to fit all the chromosomes.
@@ -427,8 +438,8 @@ class BindCompare:
 
             for arr, color in zip(data_arrays, colors):
                 x, z = np.unique(arr, return_counts=True)
-                if len(arr) != 0:
-                    z = moving_average(z, 20)
+                # if len(arr) != 0:
+                # z = moving_average(z, 20)
                 ax2.plot(x, z, c=color, alpha=0.7)
 
             if (i + 1) % Nchroms == 0:
@@ -484,23 +495,23 @@ class BindCompare:
 
         ax2 = ax1.twinx()
         x, z = np.unique(bc_dict["full"], return_counts=True)
-        if len(z) != 0:
-            z = moving_average(z, 20)
+        # if len(z) != 0:
+        #     z = moving_average(z, 20)
         ln2 = ax2.plot(x, z, c="m", label="Complete Ref Overlap (CRO)", alpha=0.7)
 
         x, z = np.unique(bc_dict["front"], return_counts=True)
-        if len(z) != 0:
-            z = moving_average(z, 20)
+        # if len(z) != 0:
+        #     z = moving_average(z, 20)
         ln3 = ax2.plot(x, z, c="r", label="Overlap Ref Front (ORF)", alpha=0.7)
 
         x, z = np.unique(bc_dict["end"], return_counts=True)
-        if len(z) != 0:
-            z = moving_average(z, 20)
+        # if len(z) != 0:
+        #     z = moving_average(z, 20)
         ln4 = ax2.plot(x, z, c="b", label="Overlaps Ref End (ORE)", alpha=0.7)
 
         x, z = np.unique(bc_dict["ext"], return_counts=True)
-        if len(z) != 0:
-            z = moving_average(z, 20)
+        # if len(z) != 0:
+        #     z = moving_average(z, 20)
         ln5 = ax2.plot(x, z, c="y", label="Proximal Peaks (PXP)", alpha=0.7)
 
         lns = ln1 + ln2 + ln3 + ln4 + ln5
@@ -542,18 +553,23 @@ class BindCompare:
             summary.write(
                 f"Total Number of Reference Peaks Overlapped: {len(bc_dict['unique_ref_overlaps'])}\n"
             )
-            if gtf is not None:
+            if gtf:
                 summary.write(
                     f"Total Number of Genes Overlapped: {len(bc_dict['all_genes'])}\n"
                 )
+                all_genes = ""
+                for gene in list(bc_dict["all_genes"]):
+                    all_genes += gene + ","
+                summary.write(f"List of All Genes: {all_genes}")
 
-    def generate_all(self, bc_dict: dict, filepath: str, gtf: GTF = None):
+    def generate_all(self, bc_dict: dict, outpath: str, name: str, gtf: GTF = None):
         """Generates all the visualizations and csv files."""
         # self.scatter_overlap_freq(bc_dict, filepath)
+        filepath = outpath + name
         self.overlap_distribution_barplot(bc_dict, filepath)
         self.overlap_distribution_piechart(bc_dict, filepath)
         self.plot_average_ref_peak(bc_dict, filepath)
         self.plot_perchrom_ref_peak(filepath)
         self.overlap_bar_totals(bc_dict, filepath)
-        self.generate_csv(bc_dict, filepath, gtf)
-        self.generate_summary(bc_dict, filepath)
+        self.generate_csv(bc_dict, filepath, outpath, name, gtf)
+        self.generate_summary(bc_dict, filepath, gtf)

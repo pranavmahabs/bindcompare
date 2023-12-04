@@ -185,5 +185,5 @@ COMMAND:	streme -p /Users/pranavmahableshwarkar/BrownUniversity/LarschanLab/Anal
 ********************************************************************************
 CPU:		pranavs-mbp-5.devices.brown.edu
 ********************************************************************************
-FINALTIME:	14.23 seconds
+FINALTIME:	13.44 seconds
 ********************************************************************************
