@@ -55,7 +55,7 @@ In the first frame of the app, you will be able to run the core functionality of
 3. **Scope:** The scope is how many nucleotides upstream and downstream from the reference peak's center that BindCompare will search for an overlap. Making this value smaller will decrease the number of overlaps and vice versa. 
 4. **Sample Name:** A short phrase to label the experiment (i.e. CLAMP)
 5. **Output Folder:** An existing folder's file path where all of the outputs will be generated. 
-6. **Genes GTF File:** This file details the chrom location of every gene in your organism. The GTF file for D. Melanogaster is provided (gzipped) in the reference category. 
+6. **Genes GTF File:** This file details the chrom location of every gene in your organism. The GTF file for D. Melanogaster is provided (gzipped) in the reference category. Enter `None` to skip this feature!
 7. **Genome FA File Path:** A FA file with a corresponding fa.fai (index file) for BedTools to extract sequences of binding sites and perform motif analysis. Enter `None` to skip this feature!
 
 ### Comparing Two BindCompare Experiments
