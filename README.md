@@ -15,7 +15,11 @@ As we can see in this diagram, there are two main categories of overlaps that ca
 
 Afterwards, Gene IDs and sequences are extracted from these sites. Then, Gene Ontology analysis is conducted on those genes and MEME/STREME motif analysis is conducted on the sequences. Finally, you can take gene lists from two separate comparisons and see if there are overlaps across different runs of BindCompare!
 
-## Quick Start: 3 Steps
+## Quick Start: 4 Steps
+  1. Clone the Git Repository for BindCompare (if you do not have this on your machine, go [here](https://github.com/git-guides/install-git)).
+  ```
+  ~/home $ git clone https://github.com/pranavmahabs/bindcompare.git
+  ```
   1. Install the conda environment using the following command in your BindCompare directory:
   ```
   ~/bindcompare $ conda env create -f environment.yml
