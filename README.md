@@ -27,7 +27,7 @@ Afterwards, Gene IDs and sequences are extracted from these sites. Then, Gene On
   ~/bindcompare $ conda activate bindcompare
   ```
 
-  3. Then, to launch the RShiny Web Application, run the following command: 
+  3. Then, to launch the BindCompare app, run the following command: 
   ```
   ~/bindcompare $ ./run.sh
   ```
