@@ -1,13 +1,16 @@
 name: bindcompare
 channels:
   - conda-forge
-  - bioconda
   - defaults
 dependencies:
-  - bedtools
-  - r-gprofiler2
+  - numpy
+  - pandas
   - customtkinter
-  - meme
   - matplotlib-base
-  - r-optparse
-  - samtools
+  - biopython
+  - intervaltree
+  # - samtools
+  # - bedtools
+  # - r-optparse
+  # - r-gprofiler2
+  # - meme
