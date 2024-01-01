@@ -38,7 +38,7 @@ python3 bindapp/merge.py ${DNA} ${RNA} ${SCOPE} ${SNAME} ${OUT}/ ${GTF} > ${OUT}
 python3 bindapp/downstream.py ${OUT}/${SNAME}_overlaps.csv ${FASTA} ${OUT} >> ${OUT}/${SNAME}_summary.txt
 
 # # echo "Finished Motif Analysis, Beginning Gene Ontology!"
-Rscript bindapp/geneont.R --outdir ${OUT} --expcondition ${SNAME}
+# Rscript bindapp/geneont.R --outdir ${OUT} --expcondition ${SNAME}
 
 echo "Completed BindCompare! Time Stamp:"
 date

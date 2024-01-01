@@ -1,9 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+from intervaltree import Interval, IntervalTree
 import pandas as pd
 from merge_class import Bed, GTF
 import os
+
+import time
 
 
 def moving_average(data, window_size):
@@ -24,21 +27,30 @@ def moving_average(data, window_size):
 
 
 class Chromosome:
-    def __init__(self, name: str, ref_binds: list, exp_binds: list, scope: int):
+    def __init__(
+        self,
+        name: str,
+        ref_binds: list,
+        exp_binds: list,
+        scope: int,
+        ref_it: IntervalTree,
+        exp_it: IntervalTree,
+    ):
         self.chr = name
-        self.ref_binds = ref_binds
-        self.exp_binds = exp_binds
+        self.ref_binds_it = ref_it
+        self.exp_binds_it = exp_it
         self.scope = scope
-        self.overlap_counts = {"Total": 0, "CRO": 0, "ORE": 0, "ORF": 0, "PXP": 0}
-        self.overlaps = []
-        self.overlap_full = []
-        self.overlap_front = []
-        self.overlap_end = []
-        self.overlap_ext = []
-        self.gene_ids = set()
 
-        self.unique_ref_overlaps = set()
-        self.unique_ola_overlaps = set()
+        self.overlap_counts_it = {"Total": 0, "CRO": 0, "ORE": 0, "ORF": 0, "PXP": 0}
+        self.overlaps_it = []
+        self.overlap_full_it = []
+        self.overlap_front_it = []
+        self.overlap_end_it = []
+        self.overlap_ext_it = []
+        self.gene_ids_it = set()
+
+        self.unique_ref_overlaps_it = set()
+        self.unique_ola_overlaps_it = set()
 
     def within(self, exp_bind: tuple, ref_bind: tuple):
         """Returns the overlap between exp_bind and ref_bind."""
@@ -61,43 +73,46 @@ class Chromosome:
         """Returns the coordinate in the format 'chr:start-end'."""
         return f"{chrom}:{coord[0]}-{coord[1]}"
 
-    def compare_chrom_bind(self):
+    def compare_chrom_bind_it(self):
         """Compares the binding sites for the given chromosome."""
         # Make all the Binding Comparisons
-        for ref_bind in self.ref_binds:
-            for exp_bind in self.exp_binds:
-                overlap, upper, lower = self.within(exp_bind, ref_bind)
-                if len(overlap) == 0:
-                    # No overlap in the binding sites... continue.
-                    continue
-                else:
+        for exp_bind in self.exp_binds_it:
+            e_beg, e_end, e_bind = exp_bind
+            overlaps = self.ref_binds_it[e_beg:e_end]
+            # overlap, upper, lower = self.within(exp_bind, ref_bind)
+            if len(overlaps) == 0:
+                # No overlap in the binding sites... continue.
+                continue
+            else:
+                for r_interval in overlaps:
+                    r_beg, r_end, ref_bind = r_interval
+                    overlap, upper, lower = self.within((e_beg, e_end), ref_bind)
                     if exp_bind[0] >= ref_bind[0] and exp_bind[1] <= ref_bind[1]:
                         # The EXP peak is fully contained by the REF peak
-                        self.overlap_full.extend(overlap)
+                        self.overlap_full_it.extend(overlap)
                         ot = "CRO"
                     elif exp_bind[1] > ref_bind[1] and exp_bind[0] <= ref_bind[1]:
                         # The EXP Peak overlaps the end of the REF peak.
-                        self.overlap_end.extend(overlap)
+                        self.overlap_end_it.extend(overlap)
                         ot = "ORE"
                     elif exp_bind[0] < ref_bind[0] and exp_bind[1] >= ref_bind[0]:
                         # The EXP Peak overlaps the front of the REF peak.
-                        self.overlap_front.extend(overlap)
+                        self.overlap_front_it.extend(overlap)
                         ot = "ORF"
                     else:
                         # The EXP Peak overlaps the REF peak externally.
-                        self.overlap_ext.extend(overlap)
+                        self.overlap_ext_it.extend(overlap)
                         ot = "PXP"
-                    self.unique_ref_overlaps.add(ref_bind)
-                    self.unique_ola_overlaps.add(exp_bind)
-                    self.overlap_counts["Total"] += 1
-                    self.overlap_counts[ot] += 1
-                    self.overlaps.append(
+                    self.unique_ref_overlaps_it.add(ref_bind)
+                    self.unique_ola_overlaps_it.add(exp_bind)
+                    self.overlap_counts_it["Total"] += 1
+                    self.overlap_counts_it[ot] += 1
+                    self.overlaps_it.append(
                         (
                             self.chr,
                             ref_bind[0],
                             ref_bind[1],
                             self.coord_format(exp_bind, self.chr),
-                            # self.coord_format((lower, upper), self.chr),
                             ot,
                         )
                     )
@@ -136,8 +151,17 @@ class BindCompare:
                 self.ref_bed.get_chrom(chromosome),
                 self.exp_bed.get_chrom(chromosome),
                 self.scope,
+                self.ref_bed.get_chrom_it(chromosome),
+                self.exp_bed.get_chrom_it(chromosome),
             )
-            self.experiments[chromosome].compare_chrom_bind()
+            # begin = time.time()
+            # self.experiments[chromosome].compare_chrom_bind()
+            # end = time.time()
+            # print("Non interval-tree took {}".format(end - begin))
+            begin = time.time()
+            self.experiments[chromosome].compare_chrom_bind_it()
+            end = time.time()
+            print("interval-tree took {}".format(end - begin))
 
     def get_experiment(self, chromosome: str):
         """Returns the experiment for the given chromosome."""
@@ -165,6 +189,46 @@ class BindCompare:
                 overlap_counts[key] += self.experiments[chromosome].overlap_counts[key]
             unique_ref_overlaps.update(self.experiments[chromosome].unique_ref_overlaps)
             unique_ola_overlaps.update(self.experiments[chromosome].unique_ola_overlaps)
+
+        return {
+            "overlaps": olaps,
+            "full": np.asarray(full_o),
+            "front": np.asarray(front_o),
+            "end": np.asarray(end_o),
+            "ext": np.asarray(ext_o),
+            "overlap_counts": overlap_counts,
+            "unique_ref_overlaps": unique_ref_overlaps,
+            "unique_ola_overlaps": unique_ola_overlaps,
+        }
+
+    def get_experiments_overlaps_it(self, chromosomes: list):
+        """Returns the experiments for the given chromosomes."""
+        olaps = []
+        full_o = []
+        front_o = []
+        end_o = []
+        ext_o = []
+        overlap_counts = {"Total": 0, "CRO": 0, "ORE": 0, "ORF": 0, "PXP": 0}
+        unique_ref_overlaps = set()
+        unique_ola_overlaps = set()
+        for chromosome in chromosomes:
+            if chromosome not in self.experiments:
+                continue
+            olaps.extend(self.experiments[chromosome].overlaps_it)
+            full_o.extend(self.experiments[chromosome].overlap_full_it)
+            front_o.extend(self.experiments[chromosome].overlap_front_it)
+            end_o.extend(self.experiments[chromosome].overlap_end_it)
+            ext_o.extend(self.experiments[chromosome].overlap_ext_it)
+            for key in self.experiments[chromosome].overlap_counts:
+                overlap_counts[key] += self.experiments[chromosome].overlap_counts_it[
+                    key
+                ]
+            unique_ref_overlaps.update(
+                self.experiments[chromosome].unique_ref_overlaps_it
+            )
+            unique_ola_overlaps.update(
+                self.experiments[chromosome].unique_ola_overlaps_it
+            )
 
         return {
             "overlaps": olaps,
@@ -224,6 +288,7 @@ class BindCompare:
         counts = bc_dict["overlap_counts"]
         values = [counts["CRO"], counts["ORF"], counts["ORE"], counts["PXP"]]
         total = sum(values)
+        print(values)
         values = [val / total for val in values]
 
         # Your code for plotting
@@ -414,7 +479,8 @@ class BindCompare:
         for i in range(Nchroms):
             chrom, ax = chroms[i], axs[i]
             chrom_t: Chromosome = self.experiments[chrom]
-            num_peaks = len(chrom_t.ref_binds)
+            # num_peaks = len(chrom_t.ref_binds)
+            num_peaks = len(chrom_t.ref_binds_it)
             x = np.arange(-self.scope, self.scope + 1, 1)
             y = np.zeros(2 * self.scope + 1)
 
@@ -565,6 +631,7 @@ class BindCompare:
     def generate_all(self, bc_dict: dict, outpath: str, name: str, gtf: GTF = None):
         """Generates all the visualizations and csv files."""
         # self.scatter_overlap_freq(bc_dict, filepath)
+        print(bc_dict.keys())
         filepath = outpath + name
         self.overlap_distribution_barplot(bc_dict, filepath)
         self.overlap_distribution_piechart(bc_dict, filepath)

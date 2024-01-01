@@ -1,21 +1,34 @@
+from intervaltree import Interval, IntervalTree
+
+
 class Bed:
     def __init__(self, bedfile: str):
         self.bedfile = bedfile
         self.chroms = []
         self.loci = {}
+        self.loci_it = {}
         self.num_peaks = 0
 
-    def update_chroms(self, chrom: str, start: str, end: str):
+    def update_chroms(self, chrom: str, start: str, end: str, is_ref: bool, scope: int):
         """Update the chroms and loci attributes. Cast start and end to int."""
         start, end = int(start), int(end)
         self.num_peaks = self.num_peaks + 1
         if chrom not in self.chroms:
             self.chroms.append(chrom)
             self.loci[chrom] = [(start, end)]
+            self.loci_it[chrom] = IntervalTree()
         else:
             self.loci[chrom].append((start, end))
 
-    def process_bed(self):
+        midpoint = int((start + end) / 2)
+        if is_ref:
+            self.loci_it[chrom][midpoint - scope : midpoint + scope + 1] = (start, end)
+            # "{}:{}-{}".format(chrom, start, end)
+        else:
+            self.loci_it[chrom][start:end] = (start, end)
+            # "{}:{}-{}".format(chrom, start, end)
+
+    def process_bed(self, is_ref: bool, scope: int):
         """Process the bedfile and update the chroms and loci attributes."""
         reference_peaks = {}
         with open(self.bedfile) as table:
@@ -32,7 +45,9 @@ class Bed:
                 else:
                     this_chrom = bed_row[0]
                     if str.isnumeric(bed_row[1]) and str.isnumeric(bed_row[2]):
-                        self.update_chroms(this_chrom, bed_row[1], bed_row[2])
+                        self.update_chroms(
+                            this_chrom, bed_row[1], bed_row[2], is_ref, scope
+                        )
 
     def get_chroms(self):
         """Returns a list of chromosomes."""
@@ -45,9 +60,13 @@ class Bed:
             loci[chrom] = self.loci[chrom]
         return loci
 
-    def get_chrom(self, chrom: str):
+    def get_chrom(self, chrom: str) -> list:
         """Returns a list of loci for the given chromosome."""
         return self.loci[chrom]
+
+    def get_chrom_it(self, chrom: str) -> IntervalTree:
+        """Returns a interval tree of loci for the given chromosome."""
+        return self.loci_it[chrom]
 
     def average_peak_size(self, chroms: list):
         """Returns the average peak size for the given chromosomes."""
@@ -70,9 +89,12 @@ class GTF:
         start, end = int(start), int(end)
         if chrom not in self.chroms:
             self.chroms.append(chrom)
-            self.loci[chrom] = [(gene, start, end)]
-        else:
-            self.loci[chrom].append((gene, start, end))
+            # self.loci[chrom] = [(gene, start, end)]
+            self.loci[chrom] = IntervalTree()
+        # self.loci[chrom].append((gene, start, end))
+        if start == end:
+            end += 1
+        self.loci[chrom][start:end] = gene
 
     def process_gtf(self):
         """Process the gtf file and update the chroms and loci attributes."""
@@ -108,22 +130,21 @@ class GTF:
     def find_fbgn(self, chrom: str, begin: str, end: str, scope: int, all_genes: set):
         """Returns the gene ID for the given chromosome, begin, and end."""
         # print(f"Finding FBGN for {chrom}:{begin}-{end}")
-        overlaps = set()
+        genes = set()
         begin = int(begin) - scope
         end = int(end) + scope
         found = "Not in GTF"
         if chrom in self.loci:
-            for genes in self.loci[chrom]:
-                gene_beg = int(genes[1])
-                gene_end = int(genes[2])
-                if (begin >= gene_beg and begin < gene_end) or (
-                    end > gene_beg and end <= gene_end
-                ):
-                    to_add = genes[0].replace('"', "").replace(";", "")
-                    overlaps.add(to_add)
-                    all_genes.add(to_add)
-            if len(overlaps) != 0:
-                found = " ".join(list(overlaps))
+            overlaps = self.loci[chrom][begin:end]
+            if len(overlaps) == 0:
+                return found
+            for gene_interval in overlaps:
+                _, _, gene_id = gene_interval
+                to_add = gene_id.replace('"', "").replace(";", "")
+                genes.add(to_add)
+                all_genes.add(to_add)
+            if len(genes) != 0:
+                found = " ".join(list(genes))
             return found
         else:
             return found

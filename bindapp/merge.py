@@ -32,8 +32,8 @@ base_bed = Bed(base_bed)
 overlay_bed = Bed(overlay_bed)
 
 # Process the BED Files
-base_bed.process_bed()
-overlay_bed.process_bed()
+base_bed.process_bed(True, int(scope))
+overlay_bed.process_bed(False, int(scope))
 
 # Set up the BindCompare Experiment
 exp = BindCompare(base_bed, overlay_bed, int(scope))
@@ -55,7 +55,9 @@ gtf.process_gtf()
 
 # Get the BC Dictionary for All Chromosomes
 exp.compare_binds()
-bc = exp.get_experiments_overlaps(b_chroms)
+# bc = exp.get_experiments_overlaps(b_chroms)
+bc_it = exp.get_experiments_overlaps_it(b_chroms)
 
 # Perform all Plotting
-exp.generate_all(bc, out_name, sample_name, gtf)
+# exp.generate_all(bc, out_name, sample_name, gtf)
+exp.generate_all(bc_it, out_name, sample_name, gtf)
