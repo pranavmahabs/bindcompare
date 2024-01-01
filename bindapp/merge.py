@@ -55,9 +55,7 @@ gtf.process_gtf()
 
 # Get the BC Dictionary for All Chromosomes
 exp.compare_binds()
-# bc = exp.get_experiments_overlaps(b_chroms)
 bc_it = exp.get_experiments_overlaps_it(b_chroms)
 
 # Perform all Plotting
-# exp.generate_all(bc, out_name, sample_name, gtf)
 exp.generate_all(bc_it, out_name, sample_name, gtf)

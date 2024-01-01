@@ -30,8 +30,6 @@ class Chromosome:
     def __init__(
         self,
         name: str,
-        ref_binds: list,
-        exp_binds: list,
         scope: int,
         ref_it: IntervalTree,
         exp_it: IntervalTree,
@@ -148,58 +146,18 @@ class BindCompare:
                 continue
             self.experiments[chromosome] = Chromosome(
                 chromosome,
-                self.ref_bed.get_chrom(chromosome),
-                self.exp_bed.get_chrom(chromosome),
                 self.scope,
                 self.ref_bed.get_chrom_it(chromosome),
                 self.exp_bed.get_chrom_it(chromosome),
             )
             # begin = time.time()
-            # self.experiments[chromosome].compare_chrom_bind()
-            # end = time.time()
-            # print("Non interval-tree took {}".format(end - begin))
-            begin = time.time()
             self.experiments[chromosome].compare_chrom_bind_it()
-            end = time.time()
-            print("interval-tree took {}".format(end - begin))
+            # end = time.time()
+            # print("interval-tree took {}".format(end - begin))
 
     def get_experiment(self, chromosome: str):
         """Returns the experiment for the given chromosome."""
         return self.experiments[chromosome]
-
-    def get_experiments_overlaps(self, chromosomes: list):
-        """Returns the experiments for the given chromosomes."""
-        olaps = []
-        full_o = []
-        front_o = []
-        end_o = []
-        ext_o = []
-        overlap_counts = {"Total": 0, "CRO": 0, "ORE": 0, "ORF": 0, "PXP": 0}
-        unique_ref_overlaps = set()
-        unique_ola_overlaps = set()
-        for chromosome in chromosomes:
-            if chromosome not in self.experiments:
-                continue
-            olaps.extend(self.experiments[chromosome].overlaps)
-            full_o.extend(self.experiments[chromosome].overlap_full)
-            front_o.extend(self.experiments[chromosome].overlap_front)
-            end_o.extend(self.experiments[chromosome].overlap_end)
-            ext_o.extend(self.experiments[chromosome].overlap_ext)
-            for key in self.experiments[chromosome].overlap_counts:
-                overlap_counts[key] += self.experiments[chromosome].overlap_counts[key]
-            unique_ref_overlaps.update(self.experiments[chromosome].unique_ref_overlaps)
-            unique_ola_overlaps.update(self.experiments[chromosome].unique_ola_overlaps)
-
-        return {
-            "overlaps": olaps,
-            "full": np.asarray(full_o),
-            "front": np.asarray(front_o),
-            "end": np.asarray(end_o),
-            "ext": np.asarray(ext_o),
-            "overlap_counts": overlap_counts,
-            "unique_ref_overlaps": unique_ref_overlaps,
-            "unique_ola_overlaps": unique_ola_overlaps,
-        }
 
     def get_experiments_overlaps_it(self, chromosomes: list):
         """Returns the experiments for the given chromosomes."""
@@ -219,7 +177,7 @@ class BindCompare:
             front_o.extend(self.experiments[chromosome].overlap_front_it)
             end_o.extend(self.experiments[chromosome].overlap_end_it)
             ext_o.extend(self.experiments[chromosome].overlap_ext_it)
-            for key in self.experiments[chromosome].overlap_counts:
+            for key in self.experiments[chromosome].overlap_counts_it:
                 overlap_counts[key] += self.experiments[chromosome].overlap_counts_it[
                     key
                 ]
@@ -288,7 +246,11 @@ class BindCompare:
         counts = bc_dict["overlap_counts"]
         values = [counts["CRO"], counts["ORF"], counts["ORE"], counts["PXP"]]
         total = sum(values)
-        print(values)
+
+        if total == 0:
+            print("Overlap Distribution Plot Terminated... no counts found.")
+            return
+
         values = [val / total for val in values]
 
         # Your code for plotting
@@ -348,13 +310,16 @@ class BindCompare:
             bc_dict["overlap_counts"]["ORE"],
             bc_dict["overlap_counts"]["PXP"],
         ]
+        colors = ["purple", "red", "blue", "yellow"]
         total = sum(counts)
         fig1, ax1 = plt.subplots()
 
         def pie_fmt(x):
             return "{:.0f}".format((total) * x / 100)
 
-        ax1.pie(counts, labels=categories, autopct=pie_fmt, startangle=90)
+        ax1.pie(
+            counts, labels=categories, autopct=pie_fmt, startangle=90, colors=colors
+        )
         ax1.axis("equal")
 
         plt.title(f"Categorization of {total} Found Overlaps", **self.font)
@@ -495,10 +460,10 @@ class BindCompare:
             ax2 = ax.twinx()
 
             data_arrays = [
-                chrom_t.overlap_full,
-                chrom_t.overlap_front,
-                chrom_t.overlap_end,
-                chrom_t.overlap_ext,
+                chrom_t.overlap_full_it,
+                chrom_t.overlap_front_it,
+                chrom_t.overlap_end_it,
+                chrom_t.overlap_ext_it,
             ]
             colors = ["m", "r", "b", "y"]
 
@@ -631,7 +596,6 @@ class BindCompare:
     def generate_all(self, bc_dict: dict, outpath: str, name: str, gtf: GTF = None):
         """Generates all the visualizations and csv files."""
         # self.scatter_overlap_freq(bc_dict, filepath)
-        print(bc_dict.keys())
         filepath = outpath + name
         self.overlap_distribution_barplot(bc_dict, filepath)
         self.overlap_distribution_piechart(bc_dict, filepath)

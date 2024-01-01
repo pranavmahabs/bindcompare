@@ -31,7 +31,7 @@ def downstream():
     if sys.argv[2] == "None":
         os.write(2, b"Skipping Sequence Extraction and Motif Analysis...\n")
     else:
-        os.write(2, b"Completed BED Merge... starting downstream analysis!\n")
+        os.write(2, b"Completed BED Merge... starting sequence extration!\n")
         input_genes = sys.argv[1]
         df = pd.read_csv(input_genes)
         bed = df[["Chrom", "Begin Ref Site", "End Ref Site"]]
@@ -54,14 +54,15 @@ def downstream():
         for _, row in df.iterrows():
             chrom_pos = (
                 row["Chrom"]
-                + str(row["Begin Ref Site"])
                 + ":"
+                + str(row["Begin Ref Site"])
+                + "-"
                 + str(row["End Ref Site"])
             )
             name = (
                 ">"
                 + row["GeneIDs"].replace('"', "").replace(";", "")
-                + ":"
+                + "; "
                 + chrom_pos
                 + "\n"
             )

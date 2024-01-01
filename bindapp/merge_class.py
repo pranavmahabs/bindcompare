@@ -112,8 +112,14 @@ class GTF:
                 else:
                     this_chrom = gtf_row[0]
                     if str.isnumeric(gtf_row[3]) and str.isnumeric(gtf_row[4]):
+                        try:
+                            gene_index = gtf_row.index("gene_id")
+                            if gene_index == len(gtf_row) - 1:
+                                continue
+                        except ValueError:
+                            print('"gene_id" not found in GTF attributes column.')
                         self.update_chroms(
-                            this_chrom, gtf_row[9], gtf_row[3], gtf_row[4]
+                            this_chrom, gtf_row[gene_index + 1], gtf_row[3], gtf_row[4]
                         )
 
     def get_chroms(self):
