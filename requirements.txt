@@ -1,6 +1,0 @@
-numpy
-pandas
-customtkinter
-matplotlib
-biopython
-# pymemesuite

@@ -8,6 +8,9 @@ import pickle
 import os
 from PIL import Image, ImageTk
 
+from .bindapp.help_dict import HELP_DICT
+from .comparexp import verify_summary_file
+
 # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_appearance_mode("System")
 
@@ -19,8 +22,9 @@ class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
 
-        with open("bindapp/help.p", "rb") as handle:
-            self.help = pickle.load(handle)
+        # with open("bindapp/help.p", "rb") as handle:
+        #     self.help = pickle.load(handle)
+        self.help = HELP_DICT
 
         # Configure Heading
         self.title("BindCompare")
@@ -46,6 +50,14 @@ class App(customtkinter.CTk):
             self.sidebar_frame, command=self.launch_manual, text="Manual Page"
         )
         self.sidebar_button_1.grid(row=3, column=0, padx=20, pady=10)
+
+        self.sidebar_button_2 = customtkinter.CTkButton(
+            self.sidebar_frame,
+            command=self.open_new_window,
+            text="comparexp",
+        )
+        self.sidebar_button_2.grid(row=4, column=0, padx=20, pady=10)
+
         self.appearance_mode_label = customtkinter.CTkLabel(
             self.sidebar_frame, text="Appearance Mode:", anchor="w"
         )
@@ -248,6 +260,66 @@ class App(customtkinter.CTk):
         """
         webbrowser.open("https://github.com/pranavmahabs/bindcompare")
 
+    def open_new_window(self):
+        new_window = customtkinter.CTkToplevel(self)  # Creating a new window
+        new_window.title("comparexp")  # Setting title for the new window
+
+        new_window.grid_columnconfigure(0, weight=1)
+        new_window.grid_rowconfigure(0, weight=1)
+
+        analysis_frame = customtkinter.CTkFrame(new_window, corner_radius=0)
+        analysis_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+
+        analysis_frame.grid_columnconfigure((0, 1), weight=1)
+        analysis_frame.grid_rowconfigure((5), weight=1)
+
+        self.entry_one = customtkinter.CTkEntry(
+            analysis_frame, placeholder_text="BC Output Directory Path 1", width=300
+        )
+        self.entry_one.grid(row=0, column=0, padx=10, pady=5, sticky="nsew")
+
+        self.entry_one_button = customtkinter.CTkButton(
+            analysis_frame,
+            text="BC Output Dir 1",
+            command=self.choose_bcdirectory1,
+        )
+        self.entry_one_button.grid(row=0, column=1, padx=10, pady=5, sticky="nsew")
+
+        self.entry_two = customtkinter.CTkEntry(
+            analysis_frame, placeholder_text="BC Output Directory Path 2", width=300
+        )
+        self.entry_two.grid(row=1, column=0, padx=10, pady=5, sticky="nsew")
+
+        self.entry_two_button = customtkinter.CTkButton(
+            analysis_frame,
+            text="BC Output Dir 2",
+            command=self.choose_bcdirectory2,
+        )
+        self.entry_two_button.grid(row=1, column=1, padx=10, pady=5, sticky="nsew")
+
+        self.comparexp = customtkinter.CTkButton(
+            analysis_frame,
+            text="Run comparexp",
+            command=self.launch_comparexp,
+        )
+        self.comparexp.grid(
+            row=2, column=0, padx=10, pady=10, columnspan=2, sticky="nsew"
+        )
+
+        self.image_label2 = customtkinter.CTkLabel(analysis_frame, text="")
+        self.image_label2.grid(row=3, column=0, columnspan=2, padx=20, pady=10)
+
+        self.label_comparexp = customtkinter.CTkLabel(
+            analysis_frame,
+            text="Errors Will be Shown in Terminal/Command Line. Open only one comparexp at a time.",
+        )
+        self.label_comparexp.grid(row=4, column=0, columnspan=2, padx=10, pady=10)
+
+        self.compare_out = customtkinter.CTkTextbox(analysis_frame, height=40)
+        self.compare_out.grid(
+            row=5, column=0, columnspan=2, padx=20, pady=10, sticky="nsew"
+        )
+
     def open_file(self, entry, dir=False):
         """
         Read in the file path
@@ -281,7 +353,7 @@ class App(customtkinter.CTk):
         # Launching Merge
         subprocess.run(
             [
-                "./bindapp/bindcompare.sh",
+                "bindcompare",
                 self.ref_entry.get(),
                 self.exp_entry.get(),
                 self.scope.get(),
@@ -294,11 +366,32 @@ class App(customtkinter.CTk):
         entry.delete(0, tkinter.END)
         entry.insert(tkinter.END, "BindCompare COMPLETED.")
 
+    def launch_comparexp(self):
+        subprocess.run(
+            [
+                "comparexp",
+                self.entry_one.get(),
+                self.entry_two.get(),
+            ]
+        )
+        self.show_selected_image2()
+        self.fill_comparexp()
+
     def choose_directory(self):
         directory_path = filedialog.askdirectory()
         self.directory_entry.delete(0, tkinter.END)
         self.directory_entry.insert(0, directory_path)
         self.populate_dropdown(directory_path)
+
+    def choose_bcdirectory1(self):
+        directory_path = filedialog.askdirectory()
+        self.entry_one.delete(0, tkinter.END)
+        self.entry_one.insert(0, directory_path)
+
+    def choose_bcdirectory2(self):
+        directory_path = filedialog.askdirectory()
+        self.entry_two.delete(0, tkinter.END)
+        self.entry_two.insert(0, directory_path)
 
     def populate_dropdown(self, directory_path):
         image_files = [
@@ -322,11 +415,45 @@ class App(customtkinter.CTk):
         self.image_label.configure(image=image)
         # self.image_label.image = photo  # Keep a reference to prevent garbage collection
 
+    def get_comparexp_name(self):
+        summary_files_folder1 = verify_summary_file(self.entry_one.get())
+        summary_files_folder2 = verify_summary_file(self.entry_two.get())
+
+        if summary_files_folder1 and summary_files_folder2:
+            p1 = os.path.basename(summary_files_folder1[0]).split("_summary.txt")[0]
+            p2 = os.path.basename(summary_files_folder2[0]).split("_summary.txt")[0]
+            return f"{p1}_v_{p2}_venn.png", f"{p1}_v_{p2}_summary.txt"
+
+    def show_selected_image2(self):
+        image_path = self.get_comparexp_name()[0]
+        self.load_and_display_image2(image_path)
+
+    def load_and_display_image2(self, image_path):
+        image = customtkinter.CTkImage(
+            light_image=Image.open(image_path), size=(420, 280)
+        )
+        self.image_label2.configure(image=image)
+        # self.image_label.image = photo  # Keep a reference to prevent garbage collection
+
+    def fill_comparexp(self):
+        text_path = self.get_comparexp_name()[1]
+        text = ""
+        with open(text_path, "r") as handle:
+            for line in handle:
+                text += line + "\n"
+        self.compare_out.delete(1.0, tkinter.END)
+        self.compare_out.insert(tkinter.END, text)
+
     def show_help(self):
         selected_option = self.interpret_menu.get()
         help_text = self.help.get(selected_option, "No help text available.")
         self.int_help_box.delete(1.0, tkinter.END)
         self.int_help_box.insert(tkinter.END, help_text)
+
+
+def main():
+    app = App()
+    app.mainloop()
 
 
 if __name__ == "__main__":
