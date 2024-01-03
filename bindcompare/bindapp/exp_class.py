@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from intervaltree import Interval, IntervalTree
 import pandas as pd
-from merge_class import Bed, GTF
+from .merge_class import Bed, GTF
 import os
 
 import time
@@ -568,7 +568,7 @@ class BindCompare:
         plt.close()
 
     def generate_summary(self, bc_dict: dict, filepath: str, gtf: GTF = None):
-        with open(filepath + "_summary.txt", "w") as summary:
+        with open(filepath + "_summary.txt", "a") as summary:
             summary.write(
                 f"Total Number of Reference Peaks: {self.ref_bed.num_peaks}\n"
             )
@@ -591,7 +591,7 @@ class BindCompare:
                 all_genes = ""
                 for gene in list(bc_dict["all_genes"]):
                     all_genes += gene + ","
-                summary.write(f"List of All Genes: {all_genes}")
+                summary.write(f"List of All Genes:\n{all_genes}")
 
     def generate_all(self, bc_dict: dict, outpath: str, name: str, gtf: GTF = None):
         """Generates all the visualizations and csv files."""

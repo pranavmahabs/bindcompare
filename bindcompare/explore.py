@@ -110,7 +110,18 @@ class ProcessManager:
         plt.savefig("explore.png")
 
 
-if __name__ == "__main__":
+def main():
+    usage = "Usage: bindexplore <scope: int> <bed file 1> <bed file 2> ...\n"
+    if len(sys.argv) == 1:
+        print("\nError: No scope or BED file provided.\n" + usage)
+        sys.exit(1)
+    if not sys.argv[1].isnumeric():
+        print("\nError: Integer scope not provided.\n" + usage)
+        sys.exit(1)
+    if len(sys.argv) < 4:
+        print("\nError: Only 1 or less BED files provided.\n" + usage)
+        sys.exit(1)
+
     scope = int(sys.argv[1])
     beds = sys.argv[2:]
 
