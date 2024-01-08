@@ -1,206 +1,210 @@
-.. raw:: html
+.. image:: ./README_imgs/bclogo.png
+   :align: center
+   :width: 300
 
-   <p align="center">
 
-.. raw:: html
+Installation
+============
 
-   </p>
+BindCompare is accessible through the PyPI system and the Command Line/Terminal.
+If these are not setup on your device, here is a user-tutorial you should
+follow first. To make sure that ``pip`` and ``python`` (must be version 3+) are 
+properly installed, running the following should produce no errors.
 
-This is a novel DNA/RNA Integration tool meant to analyze the overlap
-between protein binding sites. The input data is in the form of
-peak-called BED files from programs such as MACS2 and SEACR. If you are
-interested in selecting candidate co-regulators from a set of BED files,
-please go down to the `BindExplore <#BindExplore>`__ section.
+.. code-block:: bash
 
-Oftentimes, co-regulation from factors occurs within a larger locus
-surrounding the marked binding site. The script searches for overlaps
-between these binding sites in a chosen scope. Because BindCompare
-utilizes BED files, it enables the comparison between RNA and DNA
-binding sites, aiding the study of system wide co-transcriptional
-regulation.
+   python3 --version
+   pip --version
 
-.. raw:: html
+Once you have installed pip and python, you can run this 
+command in your CLI/Terminal. 
 
-   <!-- ![Illustration of Binding Site Overlapping in Scoped Region](https://github.com/pranavmahabs/bindcompare/blob/main/BindCompareDemo1.png) -->
+.. code-block:: bash
 
-.. raw:: html
+   pip install --upgrade #TODO: fix this.
+   pip install bindcompare
 
-   <p align="center">
+Now, you have installed BindCompare! This should have added the following five
+commands: ``bindcompare``, ``bindexplore``, ``comparexp``, ``bindlaunch``
+and ``retrievedm6``.
 
-.. raw:: html
+Introduction
+============
 
-   </p>
+BindCompare is a novel integrated protein-binding analysis platform
+designed to be user-accessible and interpretable. Given protein-binding
+sites on DNA and/or RNA, BindCompare determines and visualizes domains
+of co-regulatory activity at the single-nucleotide level.
 
-As we can see in this diagram, there are two main categories of overlaps
-that can be found from two BED Files. When you run the program, you will
-choose one BED file to the reference, or base, BED file and one BED File
-to be overlayed. The first time are complete overlaps in peak sites
-which can be seen in the right half of the drawing. BindCompare also
-looks for overlaps upstream and downstream of the reference peak. On the
-left half of the drawing, we see that there is an overlap outside of the
-direct binding site. These categories are further broken down and are
-explained in the Results category.
+The main function, ``bindcompare``, performs comparitive binding analysis 
+for two sets of peak-called protein-binding data (either on RNA or DNA),
+elucidating specific domains of co-regulation. Further, it visualizes 
+such activity, categorizes overlapping binding domains, and prepares 
+such regions for gene ontology analysis and motif discovery. 
 
-Afterwards, Gene IDs and sequences are extracted from these sites. Then,
-Gene Ontology analysis is conducted on those genes and MEME/STREME motif
-analysis is conducted on the sequences. Finally, you can take gene lists
-from two separate comparisons and see if there are overlaps across
-different runs of BindCompare!
+Auxilary functionality includes ``bindexplore`` and ``comparexp``. Given N sets 
+of protein-binding data, ``bindexplore`` applies pair-wise comparisons to 
+find which proteins interact with the greatest frequency - visualized
+through a heatmap. In ``bindcompare``, you are given the option of providing
+an Genes GTF file to automatically extract correlated genes. ``comparexp``,
+as a part of the downstream analysis, allows you to compare the co-regulatory
+regions in two different bindcompare runs. 
 
-Quick Start: 4 Steps
---------------------
+At the core of BindCompare is defining overlapping binding domains. 
+Oftentimes, co-regulation with factors occurs across a larger locus 
+surrounding the marked binding site. BindCompare searches and categorizes
+overlaps across a scoped regions containing the reference binding sites. 
+Because BindCompare utilizes BED files, it enables the comparison between 
+RNA and DNA binding sites, aiding the study of system wide 
+co-transcriptional regulation.
 
-1. Clone the Git Repository for BindCompare (if you do not have this on
-   your machine, go
-   `here <https://github.com/git-guides/install-git>`__).
+To support user-accessible software, BindCompare can be launched in a GUI
+interface that allows for easy application of bindcompare and comparexp.
 
-::
+Using BindCompare
+=================
 
-   ~/home $ git clone https://github.com/pranavmahabs/bindcompare.git
+Here is a general overview of BindCompare usage in the following schematic.
 
-2. Install the conda environment using the following command in your
-   BindCompare directory:
+.. image:: README_imgs/schematic.png
+   :align: center
+   :width: 300
 
-::
+As aforementioned, ``bindcompare`` and ``comparexp`` can be run through a tkinter
+GUI interface. All of the commands can be run from the command line. How to use
+BindCompare is presented for both the GUI and command line approaches. To launch
+the GUI:
 
-   ~/home $ cd bindcompare
-   ~/home/bindcompare $ conda env create -f environment.yml
+.. code-block:: bash
 
-If you are on an M1 device, you will have to use a Rosetta enabled
-terminal as many of these packages rely on an x86_64 architecture!
+   bindlaunch
 
-3. Activate BindCompare environment using the following command:
+That should launch a platform that looks like this:
 
-::
+.. image:: README_imgs/bindlaunch.png
+   :align: center
+   :width: 300
 
-   ~/bindcompare $ conda activate bindcompare
+``bindcompare``
+---------------
 
-4. Then, to launch the BindCompare app, run the following command:
+``bindcompare`` takes in two peak-called BED files from programs such as MACS2 and
+SEACR. One is denoted as teh reference or base file and the other is the experimental
+or overlayed file. For each binding site in the experimental file, BindCompare
+searches for every overlapping reference binding site, also identifying experimental peaks
+that exist within a scoped region from the peak. This scoped regions relates to the fact
+that co-regulatory activity can occur across a broad region and can be changed by the user.
 
-::
+This mini-schematic shows the general idea of overlapping peaks versus proximal peaks.
 
-   ~/bindcompare $ ./run.sh
+.. image:: ./README_imgs/BindCompareDemo1.png
+   :align: center
+   :width: 300
 
-This should launch the application in a separate window. The status
-results from your experiments will appear in the **terminal** as you go.
+For both the GUI and command line approach, the following seven input options exist.
 
-Note: If you get a permission denied error when running ``./run.sh``,
-running ``chmod +wx run.sh`` should fix this issue!
+#. *Base Bed File Path:* The file path for your reference BED file. If comparing DNA and RNA, then this should be the filepath for the DNA BED file or more generally, the BED file with the larger peak size.
+#. *Overlayed Bed File Path:* Enter the file path for your overlayed BED file.
+#. *Scope:* How many nucleotides upstream and downstream from the reference peak’s center that BindCompare will search for an overlap. Making this value smaller will decrease the number of overlaps and vice versa.
+#. *Sample Name:* A short phrase to label the experiment (i.e. CLAMP)
+#. *Output Folder:* A folder’s file path where all of the outputs will be generated (will be created if it does not exist).
+#. *Genes GTF File:* This file details the chrom location of every gene in your organism. Enter ``None`` if you do not have it.
+#. *Genome FA File Path:* A FA file with a corresponding fa.fai (index file) for BedTools to extract sequences of binding sites. Enter ``None`` if you do not have it.
 
-Reference Files
-~~~~~~~~~~~~~~~
+If your BED files are for *D. Melanogaster* in the dm6 build, you may run in the command-line:
 
-To run the script, you are required to provide a Genes GTF file and
-optionally a whole Genome FA file. If you are using the DM6 system,
-these files are provided - zipped - in the ``reference_files`` folder.
-To unzip them and use them, run the following command:
+.. code-block:: bash
 
-::
+   retrievedm6
 
-   ~/bindcompare/reference_files $ gunzip dm6.fa.gz; gunzip dmel-all-r6.46.gtf.gz
+This will automatically download the dm6 FASTA file and genes GTF file. Right now this is only
+supported for *D. Melanogaster*. 
 
-Navigating the Tkinter Application
-----------------------------------
+Using the GUI
+^^^^^^^^^^^^^
+When you launch the app using ``bindlaunch``, enter all of the files into the appropriate rows.
+Other than *scope* and *sample name*, you can utilize the built-in file-finder to
+choose the correct file you are interested in using. Note that this will force you to have already
+created the output directory as you would otherwise be unable to select it.
 
-Comparing Two Bed Files
-~~~~~~~~~~~~~~~~~~~~~~~
+Once you have filled all of the inputs in, you can click the blue Run BindCompare button. If there
+is any outputs or errors, this will show up in your terminal - not in the app. Once BindCompare
+has completed, the status bar should change to reflect this. 
 
-In the first frame of the app, you will be able to run the core
-functionality of BindCompare. There are seven input boxes on the left
-that you will have to fill out before running the tool. 1. **Base Bed
-File Path:** Enter the file path for your reference BED file. If
-comparing DNA and RNA, then this should be the filepath for the DNA BED
-file or more generally, the BED file with the larger peak size. 2.
-**Overlayed Bed File Path:** Enter the file path for your overlayed BED
-file. Conversely, when applicable, this would be the BED file with the
-smaller peak size. 3. **Scope:** The scope is how many nucleotides
-upstream and downstream from the reference peak’s center that
-BindCompare will search for an overlap. Making this value smaller will
-decrease the number of overlaps and vice versa. 4. **Sample Name:** A
-short phrase to label the experiment (i.e. CLAMP) 5. **Output Folder:**
-An existing folder’s file path where all of the outputs will be
-generated. 6. **Genes GTF File:** This file details the chrom location
-of every gene in your organism. The GTF file for D. Melanogaster is
-provided (gzipped) in the reference category. Enter ``None`` to skip
-this feature! 7. **Genome FA File Path:** A FA file with a corresponding
-fa.fai (index file) for BedTools to extract sequences of binding sites
-and perform motif analysis. Enter ``None`` to skip this feature!
+Finally, on the right hand side you can choose to do mini-visualizations of the plots generated. If
+you choose the same output directory, the dropdown menu will populate all of the images in that folder.
+Then, you can choose to visualize any of them (in a compressed format). A help menu in the app contains
+a summarized meaning of each plot to remind you what you are looking at. 
 
-Comparing Two BindCompare Experiments
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Command Line
+^^^^^^^^^^^^
 
-When you run BindCompare with two BED Files, you will get a list of
-genes where there was a binding overlap. If you were to run BindCompare
-on say male samples and female samples, you would then have two lists of
-genes. You can copy and paste these two lists in to the input categories
-in the **Comparison Tab** in the RShiny interface and then click submit.
-These are the outputs from this analysis:
+In your command line, enter:
 
-1. Using the equation :math:`J(A,B) = \frac{|A \cap B|}{|A \cup B|}`,
-   the Jaccard Similarity Index is calculated and printed.
-2. A size-biased venn diagram is also generated using the R-Eulerr
-   package.
-3. Gene lists are also printed from each of the following categories:
-   Only List 1, Only List 2, Both List 1 and List 2.
+.. code-block:: bash
 
-Note that this is not saved to your computer and you would need to take
-a Screenshot to save this result! Additionally, make sure to copy the
-list exactly as it is printed from the first tab.
+   # help command
+   bindcompare
+   # run a bindcompare experiment
+   bindcompare <ref bed> <exp bed> <scope: int> <sample name> <output dir> <GTF|None> <FA|None>
+
 
 Understanding the Results
--------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^
+Overlap Profile (_ref_freq.png)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Overlap Profile
-~~~~~~~~~~~~~~~
+.. image:: ./README_imgs/ref_freq.png
+   :align: center
+   :width: 200
 
-Below is a sample Overlap Profile. The overlaps are categorized into
-four main categories based upon the location of the overlap: 1.
-Completely overlapping (purple lines in frequency plot). 2. Partially
-overlapping at the DNA peak start site (red lines in frequency plot). 3.
-Partially overlapping at the DNA peak end site (blue lines in frequency
-plot) 4. Non-overlapping, i.e. when there is an overlap in a region
-outside the DNA binding site (yellow lines in frequency plot).
+This is a sample overlap profile. An overlap is defined in four ways: 
+1. Completely overlapping (purple lines, CRO). 2. Partially
+overlapping at the DNA peak start site (red lines, ORF). 3.
+Partially overlapping at the DNA peak end site (blue lines, ORE) 
+4. Non-overlapping but proximal, i.e. when there is an peak in a region
+outside the reference binding site (yellow lines, PXP). Note that
+these are categories are for experimental peaks overlayed on a reference peak.
 
 This extended region is defined by the scope variable in the script,
 allowing the overlap to look for binding sites in the proximity of the
-DNA binding site (this scope is 2 kb including the DNA binding site). It
-should be noted that multiple RNA peaks can be found on one DNA peak.
-All of these overlaps are placed onto a [-scope, scope] region. Then,
-each type of overlap shown with a different color is overlaid and
-plotted onto a frequency plot. So, if the frequency at a given base pair
-is 5, then there are five overlaps that contained that base pair within
-the region defined by the scope.
+binding site (this scope is 2 kb including the DNA binding site). It
+should be noted that multiple experimental peaks can overlap with one
+reference peak and vice versa. Counts of these overlaps are placed onto 
+a [-scope, scope] region. Then,each type of overlap shown with a different 
+color is overlaid and plotted onto a frequency plot. So, if the frequency 
+at a given base pair is 5, then there are five overlaps that contained that 
+base pair within the region defined by the scope.
 
-.. raw:: html
-
-   <p align="center">
-
-.. raw:: html
-
-   </p>
+In black, the average peak/peak-size of the reference BED file is shown. 
 
 Oftentimes, it can be valuable to see **where** this split is occurring!
 The values derived for the above plot can be `split over all
 chromsomes <https://github.com/pranavmahabs/bindcompare/blob/main/SampleOut/ClampKC_chrom_ref_freq.png>`__.
 
-Bar Graph and Pie Chart
-~~~~~~~~~~~~~~~~~~~~~~~
+Bar Summary (_barsummary.png)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Total Binding Peaks references the number of peaks or rows that are in
+.. image:: ./README_imgs/barsummary.png
+   :align: center
+   :width: 200
+
+Exp. Binding Peaks references the number of peaks or rows that are in
 the overlayed bed file. Unique overlaps references the number of unique
 peaks in the overlayed BED file that were found to overlap with a peak
 in the base/reference BED file. The total number of overlaps simply
-references how many times an RNA peak overlapped with a DNA peak. Note
-that there can be repeats here! Finally, the last column is the number
-of unique reference/base peaks that were found within an overlap.
+references how many times an experimental peak overlapped with a reference peak. Note
+that there can be repeats here! Then, the next two values are the same but provide
+the counts for the number of proximal peaks found in scoped regions. Finally, 
+the last column is the number of unique reference/base peaks that were 
+found within an overlap or proximal peak event.
 
-.. raw:: html
+Distribution Plots
+~~~~~~~~~~~~~~~~~~
 
-   <p align="center">
-
-.. raw:: html
-
-   </p>
+There is a stacked bar plot and pie chart that shows the number of
+each overlap event type that occurred. These are split across the
+four categories CRO, ORF, ORE, and PXP. 
 
 Summary File and CSV Output
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -208,65 +212,87 @@ Summary File and CSV Output
 The CSV file contains one row for every reference peak that was involved
 in an overlap. This includes the Chromosome, Beginning/Ending Coordinate
 of the peak, the corresponding nucleotide sequence, the type of overlap
-(as described above), and the Gene IDs that correspond to that region.
+(as described above), and the Gene IDs/sequence that correspond to that region
+if the GTF/Genome file is provided. 
+
+Further, in a sub-directory, the CSV values are split by overlap type. Because
+one reference peak can be involved with many different types of overlaps it is
+possible for it to appear in multiple subcategorized CSV files. 
 
 The summary file contains the average peak size for both of the BED
 files. Additionally, it prints all of the found Gene IDs that are in the
 CSV file so that they can be easily converted to gene names.
 
-Other Outputs!
-~~~~~~~~~~~~~~
 
-Gene Ontology results from GProfiler2 and motif analysis from either
-STREME or MEME or also included in this directory. Please see the `MEME
-Suite <https://meme-suite.org/meme/doc/streme.html>`__ page for more
-information on MEME/STREME. Please see the `GProfiler2
-Manual <https://cran.r-project.org/web/packages/gprofiler2/vignettes/gprofiler2.html>`__
-for more information on the Gene Ontology analysis! Feel free to copy
-the gene list into your GO tool of choice as well!
-
-BindExplore
-===========
+``bindexplore``
+---------------
 
 If you are interested in taking N BED files for N different binding
 experiments, you can visualize pair-wise binding overlaps across all
 experiments to select candidate pairs for BindCompare. This script,
 right now, can only be run from the terminal:
 
-::
+.. code-block:: bash
 
-   $ ./bindexplore.sh
-   $ Enter BED File Paths (Space-Separated): CLAMP_KC_DNA.bed CLAMP_S2_DNA.bed gaf_chip.bed MLE_DNA.bed
-   Provided BED File Paths:
-   CLAMP_KC_DNA.bed
-   CLAMP_S2_DNA.bed
-   gaf_chip.bed
-   MLE_DNA.bed
-   $ Enter the scope: 5000
-   Scope: 5000
-   $ Is everything okay? Enter 'yes' to continue or 'no' to cancel: yes
+   bindexplore <scope> <bed_file_1> <bed_file_2> ... <bed_file_n>
 
 The ``scope`` value essentially bins the genome into bins of size
 ``scope``. Then, it uses this size to search for overlaps within each
 bin. Then a heatma is generated to visualize binding overlaps and can be
 seen below. The math for each cell is as follows:
 
-:math:`\frac{\text{Num Ref Binds found in Overlayed Sites}}{\text{Num Ref Binds}}`
+.. code-block:: latex
 
-.. raw:: html
+   \frac{\text{Num Ref Binds found in Overlayed Sites}}{\text{Num Ref Binds}}
 
-   <p align="center">
-
-.. raw:: html
-
-   </p>
+.. image:: README_imgs/explore.png
+   :align: center
+   :width: 200
 
 In this example, we see that we are comparing CLAMP binding in KC and S2
 Cells, GAF Binding, and MLE Binding. Understandably, CLAMP KC and S2 has
 a significant overlap!
 
+``comparexp``
+-------------
+This is a simple way to compare and visualize two ``bindcompare`` runs. 
+This is only possible if you provided a GTF file. Make sure that your
+original summary file is in the ``bindcompare`` output directory you provide.
+
+Given two directories for ``bindcompare`` outputs, ``comparexp`` will produce
+a weighted Venn Diagram based on the genes present in each of the categories.
+In a summary file, the program will also provide the jaccard similarity score
+in addition to the names of the genes in each category (comma separated so that
+it can be easily input into Gene Ontology platforms).
+
+The output names for these files will have the prefix "samplename1_v_samplename2"
+where each sample name is extracted from the name of the summary file. They will
+be saved in the folder from which you launched the GUI or where you run ``comparexp``.
+
+Using the GUI
+^^^^^^^^^^^^^
+When you launch the app using ``bindlaunch``, you may click the `comparexp`
+button. This will launch another mini window. There, you can enter in the 
+file paths for two folders that contain BindCompare summary files with gene
+lists and click run. The output and GUI should look like this:
+
+.. image:: README_imgs/comparexp.png
+   :align: center
+   :width: 200
+
+As you can see, the venn diagram is rendered and the entire summary file
+will also be dumped below in the text box. 
+
+Command Line
+^^^^^^^^^^^^
+The same functionality can also be achieved through the command line. 
+.. code-block:: bash
+
+   comparexp <bindcompare outdir 1> <bindcompare outdir 2>
+
 Credits
--------
+=======
 
 This was script was written at Brown University in the `Larschan
-Lab <https://www.larschanlab.com>`__ by Pranav Mahableshwarkar.
+Lab <https://www.larschanlab.com>`__ by Pranav Mahableshwarkar under
+the guidance of Mukulika Ray, PhD and Erica Larschan, PhD. 
