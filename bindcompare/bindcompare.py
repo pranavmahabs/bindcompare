@@ -28,13 +28,16 @@ def main():
     GTF = sys.argv[6]
     FASTA = sys.argv[7]
 
-    summary_output = f"{OUT}/{SNAME}_summary.txt"
+    summary_output = os.path.join(OUT, "{SNAME}_summary.txt")
+
+    if not os.path.exists(OUT):
+        os.makedirs(OUT, exist_ok=True)
 
     with open(summary_output, "w") as summary_file:
         merge.main(DNA, RNA, SCOPE, SNAME, f"{OUT}/", GTF)
 
     with open(summary_output, "a") as summary_file:
-        downstream.downstream(f"{OUT}/{SNAME}_overlaps.csv", FASTA, OUT)
+        downstream.downstream(os.path.join(OUT, "_overlaps.csv"), FASTA, OUT)
 
     print("Completed BindCompare! Time Stamp:")
     os.system("date")

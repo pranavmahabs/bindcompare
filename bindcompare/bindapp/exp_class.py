@@ -50,6 +50,9 @@ class Chromosome:
         self.unique_ref_overlaps_it = set()
         self.unique_ola_overlaps_it = set()
 
+        self.unique_ref_proxpeak_it = set()
+        self.unique_exp_proxpeak_it = set()
+
     def within(self, exp_bind: tuple, ref_bind: tuple):
         """Returns the overlap between exp_bind and ref_bind."""
         midpoint = (int)((int(ref_bind[0]) + int(ref_bind[1])) / 2)
@@ -101,8 +104,13 @@ class Chromosome:
                         # The EXP Peak overlaps the REF peak externally.
                         self.overlap_ext_it.extend(overlap)
                         ot = "PXP"
-                    self.unique_ref_overlaps_it.add(ref_bind)
-                    self.unique_ola_overlaps_it.add(exp_bind)
+
+                    if ot == "PXP":
+                        self.unique_ref_proxpeak_it.add(ref_bind)
+                        self.unique_exp_proxpeak_it.add(exp_bind)
+                    else:
+                        self.unique_ref_overlaps_it.add(ref_bind)
+                        self.unique_ola_overlaps_it.add(exp_bind)
                     self.overlap_counts_it["Total"] += 1
                     self.overlap_counts_it[ot] += 1
                     self.overlaps_it.append(
@@ -169,6 +177,8 @@ class BindCompare:
         overlap_counts = {"Total": 0, "CRO": 0, "ORE": 0, "ORF": 0, "PXP": 0}
         unique_ref_overlaps = set()
         unique_ola_overlaps = set()
+        unique_ref_proxpeak = set()
+        unique_exp_proxpeak = set()
         for chromosome in chromosomes:
             if chromosome not in self.experiments:
                 continue
@@ -187,6 +197,12 @@ class BindCompare:
             unique_ola_overlaps.update(
                 self.experiments[chromosome].unique_ola_overlaps_it
             )
+            unique_ref_proxpeak.update(
+                self.experiments[chromosome].unique_ref_proxpeak_it
+            )
+            unique_exp_proxpeak.update(
+                self.experiments[chromosome].unique_exp_proxpeak_it
+            )
 
         return {
             "overlaps": olaps,
@@ -197,6 +213,8 @@ class BindCompare:
             "overlap_counts": overlap_counts,
             "unique_ref_overlaps": unique_ref_overlaps,
             "unique_ola_overlaps": unique_ola_overlaps,
+            "unique_ref_proxpeak": unique_ref_proxpeak,
+            "unique_exp_proxpeak": unique_exp_proxpeak,
         }
 
     def scatter_overlap_freq(self, bc_dict: dict, filepath: str):
@@ -328,27 +346,50 @@ class BindCompare:
 
     def overlap_bar_totals(self, bc_dict: dict, filepath: str):
         categories = [
-            "Total Exp.\nBinding Peaks",
+            "Exp. Binding\nPeaks",
             "Unique Overlaps",
-            "Total Number\nof Overlaps",
-            "Reference\nPeaks Overlapped",
+            "Total No.\nof Overlaps",
+            "Unique\nProx. Peaks",
+            "Total No. of\nProx. Peaks",
+            "Reference\nPeaks Identified",
         ]
+
+        overlap_total = (
+            bc_dict["overlap_counts"]["CRO"]
+            + bc_dict["overlap_counts"]["ORF"]
+            + bc_dict["overlap_counts"]["ORE"]
+        )
+
+        complete = set()
+        complete.update(bc_dict["unique_ref_overlaps"])
+        complete.update(bc_dict["unique_ref_proxpeak"])
 
         vals = [
             self.exp_bed.num_peaks,
             len(bc_dict["unique_ola_overlaps"]),
-            bc_dict["overlap_counts"]["Total"],
-            len(bc_dict["unique_ref_overlaps"]),
+            overlap_total,
+            len(bc_dict["unique_exp_proxpeak"]),
+            bc_dict["overlap_counts"]["PXP"],
+            len(complete),
         ]
         bars = plt.bar(
             categories,
             vals,
-            color=["mediumblue", "sandybrown", "lightgrey", "cornflowerblue"],
+            color=[
+                "steelblue",
+                "sandybrown",
+                "lightgrey",
+                "peru",
+                "slategrey",
+                "cornflowerblue",
+            ],
         )
 
         for bar in bars:
             yval = bar.get_height()
-            plt.text(bar.get_x() + 0.3, yval + 0.3, yval, wrap=True)
+            plt.text(bar.get_x() + 0.25, yval + 0.35, yval, wrap=True)
+
+        plt.xticks(fontsize=7)
 
         plt.ylabel("")
         plt.xlabel("")

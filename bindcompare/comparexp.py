@@ -27,7 +27,7 @@ def create_summary_file(genes_folder1, genes_folder2, prefix1, prefix2):
             genes = venn.get_label_by_id(idx).get_text().split("\n")
             venn_labels[label].extend(genes)
 
-    plt.title(f"Comparing Co-Regulatory Genes Across {prefix1} and {prefix2}")
+    plt.title(f"Comparing Co-Regulatory Gene Regions for {prefix1} and {prefix2}")
 
     venn_file_name = f"{prefix1}_v_{prefix2}_venn.png"
     # Show Venn diagram
