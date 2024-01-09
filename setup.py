@@ -1,6 +1,7 @@
 from setuptools import setup, find_packages
 import codecs
 import os.path
+from pathlib import Path
 
 
 def read(rel_path):
@@ -22,6 +23,7 @@ setup(
     name="bindcompare",
     version=get_version("bindcompare/__init__.py"),
     description="A Novel DNA/RNA Binding Integration and Analysis Platform.",
+    long_description=Path("README.rst").read_text(encoding="utf-8"),
     url="https://github.com/pranavmahabs/bindcompare",
     author="P. Mahableshwarkar, M.Ray, E. Larschan 2024",
     author_email="pranav_mahableshwarkar@brown.edu",
@@ -47,10 +49,10 @@ setup(
         ],
     },
     classifiers=[
-        "Development Status :: 1 - Development",
-        "Intended Audience :: Bioinformatics Research",
-        "License :: GPL License",
-        "Operating System :: Unix :: Linux :: MacOS :: MacOS X",
-        "Programming Language :: Python :: 3 :: Only",
+        "Development Status :: 1 - Planning",
+        "Intended Audience :: Science/Research",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python",
     ],
 )
