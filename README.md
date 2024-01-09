@@ -1,17 +1,17 @@
 <p align="center">
-  <img src="https://github.com/pranavmahabs/bindcompare/blob/main/README_supp/images/bclogo.png" width="50%" height="50%">
+  <img src="https://github.com/pranavmahabs/bindcompare/blob/main/docs/images/bclogo.png" width="50%" height="50%">
 </p>
 
 ### Table of Contents
 [Introduction](#Introduction) \
-[Installation](https://github.com/pranavmahabs/bindcompare/blob/main/README_supp/installation.rst) \
+[Installation](https://github.com/pranavmahabs/bindcompare/blob/main/docs/installation.rst) \
 [Using BindCompare](#Using_BindCompare) \
 [Credits](#Credits) 
 
 BindCompare Function Manuals: \
-[bindcompare](https://github.com/pranavmahabs/bindcompare/blob/main/README_supp/bindcompare.rst) \
-[bindexplore](https://github.com/pranavmahabs/bindcompare/blob/main/README_supp/bindexplore.rst) \
-[comparexp](https://github.com/pranavmahabs/bindcompare/blob/main/README_supp/comparexp.rst)
+[bindcompare](https://github.com/pranavmahabs/bindcompare/blob/main/docs/bindcompare.rst) \
+[bindexplore](https://github.com/pranavmahabs/bindcompare/blob/main/docs/bindexplore.rst) \
+[comparexp](https://github.com/pranavmahabs/bindcompare/blob/main/docs/comparexp.rst)
 
 ## Introduction
 
@@ -50,7 +50,7 @@ interface that allows for easy application of bindcompare and comparexp.
 Here is a general overview of BindCompare usage in the following schematic.
 
 <p align="center">
-  <img src="https://github.com/pranavmahabs/bindcompare/blob/main/README_supp/images/schematic.png" width="50%" height="50%">
+  <img src="https://github.com/pranavmahabs/bindcompare/blob/main/docs/images/schematic.png" width="50%" height="50%">
 </p>
 
 As aforementioned, ``bindcompare`` and ``comparexp`` can be run through a tkinter
@@ -65,7 +65,7 @@ bindlaunch
 That should launch a platform that looks like this:
 
 <p align="center">
-  <img src="https://github.com/pranavmahabs/bindcompare/blob/main/README_supp/images/bindlaunch.png" width="50%" height="50%">
+  <img src="https://github.com/pranavmahabs/bindcompare/blob/main/docs/images/bindlaunch.png" width="50%" height="50%">
 </p>
 
 Please visit the command specific pages for each of the above commands to learn more

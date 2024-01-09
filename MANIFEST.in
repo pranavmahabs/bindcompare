@@ -1,0 +1,8 @@
+include setup.py
+include README.rst
+include LICENSE
+
+recursive-include bindcompare *
+recursive-exclude * __pycache__
+
+recursive-include docs *

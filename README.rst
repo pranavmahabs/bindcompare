@@ -1,15 +1,17 @@
-.. image:: ./README_supp/images/bclogo.png
+.. image:: ./docs/images/bclogo.png
    :align: center
    :width: 300
 
 .. toctree:: 
    :maxdepth: 2
 
-   README_supp/installation
-   README_supp/bindcompare
-   README_supp/bindexplore
-   README_supp/comparexp
-
+   Introduction
+   docs/installation
+   Using BindCompare
+   docs/bindcompare
+   docs/bindexplore
+   docs/comparexp
+   Credits
 
 Introduction
 ============
@@ -49,7 +51,7 @@ Using BindCompare
 
 Here is a general overview of BindCompare usage in the following schematic.
 
-.. image:: ./README_supp/images/schematic.png
+.. image:: ./docs/images/schematic.png
    :align: center
    :width: 400
 
@@ -64,7 +66,7 @@ the GUI and command line approaches. To launch the GUI:
 
 That should launch a platform that looks like this:
 
-.. image:: ./README_supp/images/bindlaunch.png
+.. image:: ./docs/images/bindlaunch.png
    :align: center
    :width: 350
 
