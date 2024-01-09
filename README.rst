@@ -26,7 +26,8 @@ command in your CLI/Terminal.
 
 Now, you have installed BindCompare! This should have added the following five
 commands: ``bindcompare``, ``bindexplore``, ``comparexp``, ``bindlaunch``
-and ``retrievedm6``.
+and ``retrievedm6``. If you want to pull the source code, directions are found
+at the bottom of the documentation. 
 
 Introduction
 ============
@@ -296,3 +297,10 @@ Credits
 This was script was written at Brown University in the `Larschan
 Lab <https://www.larschanlab.com>`__ by Pranav Mahableshwarkar under
 the guidance of Mukulika Ray, PhD and Erica Larschan, PhD. 
+
+If you want to pull the source-code, this can be done via github. 
+.. code-block:: bash
+
+   git pull https://github.com/pranavmahabs/bindcompare.git
+
+Please leave any messages here regarding errors or issues found in using the platform. 
