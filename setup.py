@@ -31,13 +31,13 @@ setup(
     packages=["bindcompare", "bindcompare.bindapp"],
     package_data={"bindcompare": ["reference_files/dm*"]},
     install_requires=[
-        "numpy",
-        "pandas",
-        "customtkinter",
-        "matplotlib",
-        "biopython",
-        "intervaltree",
-        "matplotlib_venn",
+        "numpy>=1.0",
+        "pandas>=1.0",
+        "customtkinter>=1.0",
+        "matplotlib>=3.0",
+        "biopython>=1.0",
+        "intervaltree>=1.0",
+        "matplotlib_venn>=0.11",
     ],
     entry_points={
         "console_scripts": [

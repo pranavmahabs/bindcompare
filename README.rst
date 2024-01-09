@@ -1,4 +1,4 @@
-.. image:: ./docs/images/bclogo.png
+.. image:: "https://github.com/pranavmahabs/bindcompare/blob/main/docs/images/bclogo.png"
    :align: center
    :width: 300
 
@@ -32,20 +32,6 @@ designed to be user-accessible and interpretable. Given protein-binding
 sites on DNA and/or RNA, BindCompare determines and visualizes domains
 of co-regulatory activity at the single-nucleotide level.
 
-The main function, ``bindcompare``, performs comparative binding analysis 
-for two sets of peak-called protein-binding data (either on RNA or DNA),
-elucidating specific domains of co-regulation. Further, it visualizes 
-such activity, categorizes overlapping binding domains, and prepares 
-such regions for gene ontology analysis and motif discovery. 
-
-Auxilary functionality includes ``bindexplore`` and ``comparexp``. Given N sets 
-of protein-binding data, ``bindexplore`` applies pair-wise comparisons to 
-find which proteins interact with the greatest frequency - visualized
-through a heatmap. In ``bindcompare``, you are given the option of providing
-an Genes GTF file to automatically extract correlated genes. ``comparexp``,
-as a part of the downstream analysis, allows you to compare the co-regulatory
-regions in two different bindcompare runs. 
-
 At the core of BindCompare is defining overlapping binding domains. 
 Oftentimes, co-regulation with factors occurs across a larger locus 
 surrounding the marked binding site. BindCompare searches and categorizes
@@ -55,12 +41,14 @@ RNA and DNA binding sites, aiding the study of system wide
 co-transcriptional regulation.
 
 To support user-accessible software, BindCompare can be launched in a GUI
-interface that allows for easy application of bindcompare and comparexp.
+interface that allows for easy application of bindcompare and comparexp. To
+learn how to utilize the tool, please read below and do not hesitate to 
+reach out if any bugs or issues are revealed.
 
 Quick Start
 ===========
 
-Install bindcompare and its dependencies from PyPI_ using pip::
+Install bindcompare and its dependencies from PyPI using pip::
 
    pip install bindcompare
 
@@ -68,11 +56,8 @@ Then, to run the core function ``bindcompare``::
 
    bindcompare <ref bed> <exp bed> <scope: int> <sample name> <output dir> <GTF|None> <FA|None>
 
-Alternatively, to launch the core GUI application (requires a graphics setup)::
-
-   bindlaunch
-
-For a more detailed walk-through, read the full documentation below and function specific
+Alternatively, to launch the core GUI application, see below. For 
+a more detailed walk-through, read the full documentation below and function specific
 manuals. Complete installation instructions can also be found at 
 
 Using BindCompare
@@ -80,7 +65,7 @@ Using BindCompare
 
 Here is a general overview of BindCompare usage in the following schematic.
 
-.. image:: ./docs/images/schematic.png
+.. image:: https://github.com/pranavmahabs/bindcompare/blob/main/docs/images/schematic.png
    :align: center
    :width: 400
 
@@ -100,7 +85,7 @@ the GUI and command line approaches. To launch the GUI:
 
 That should launch a platform that looks like this:
 
-.. image:: ./docs/images/bindlaunch.png
+.. image:: https://github.com/pranavmahabs/bindcompare/blob/main/docs/images/bindlaunch.png
    :align: center
    :width: 350
 
