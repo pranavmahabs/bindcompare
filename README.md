@@ -80,7 +80,7 @@ the guidance of Mukulika Ray, PhD and Erica Larschan, PhD.
 If you want to pull the source-code, this can be done via github. 
 
 ``` bash
-   git pull https://github.com/pranavmahabs/bindcompare.git
+   git clone https://github.com/pranavmahabs/bindcompare.git
 ```
 
 Please leave any messages here regarding errors or issues found in using the platform. 
