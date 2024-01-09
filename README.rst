@@ -2,11 +2,20 @@
    :align: center
    :width: 300
 
-
 .. include:: README_supp/installation.rst
+.. _installation:
 .. include:: README_supp/bindcompare.rst
+.. _bindcompare:
 .. include:: README_supp/bindexplore.rst
+.. _bindexplore:
 .. include:: README_supp/comparexp.rst
+.. _comparexp:
+
+.. :ref:`Installation <installation>`
+.. :ref:`bindcompare <bindcompare>`
+.. :ref:`bindexplore <bindexplore>`
+.. :ref:`comparexp <comparexp>`
+
 
 Introduction
 ============
