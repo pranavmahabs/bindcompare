@@ -2,19 +2,13 @@
    :align: center
    :width: 300
 
-.. include:: README_supp/installation.rst
-.. _installation:
-.. include:: README_supp/bindcompare.rst
-.. _bindcompare:
-.. include:: README_supp/bindexplore.rst
-.. _bindexplore:
-.. include:: README_supp/comparexp.rst
-.. _comparexp:
+.. toctree:: 
+   :maxdepth: 2
 
-.. :ref:`Installation <installation>`
-.. :ref:`bindcompare <bindcompare>`
-.. :ref:`bindexplore <bindexplore>`
-.. :ref:`comparexp <comparexp>`
+   README_supp/installation
+   README_supp/bindcompare
+   README_supp/bindexplore
+   README_supp/comparexp
 
 
 Introduction
