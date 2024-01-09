@@ -1,4 +1,4 @@
-.. image:: "https://github.com/pranavmahabs/bindcompare/blob/main/docs/images/bclogo.png"
+.. image:: https://github.com/pranavmahabs/bindcompare/blob/main/docs/images/bclogo.png
    :align: center
    :width: 300
 
