@@ -6,7 +6,8 @@
 [Introduction](#Introduction) \
 [Installation](https://github.com/pranavmahabs/bindcompare/blob/main/README_supp/installation.rst) \
 [Using BindCompare](#Using_BindCompare) \
-[Credits](#Credits) \
+[Credits](#Credits) 
+
 BindCompare Function Manuals: \
 [bindcompare](https://github.com/pranavmahabs/bindcompare/blob/main/README_supp/bindcompare.rst) \
 [bindexplore](https://github.com/pranavmahabs/bindcompare/blob/main/README_supp/bindexplore.rst) \
