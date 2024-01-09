@@ -73,8 +73,8 @@ about how to use BindCompare.
 
 ## Credits
 
-This was script was written at Brown University in the `Larschan
-Lab <https://www.larschanlab.com>`__ by Pranav Mahableshwarkar under
+This was script was written at Brown University in the
+[Larschan Lab](https://www.larschanlab.co) by Pranav Mahableshwarkar under
 the guidance of Mukulika Ray, PhD and Erica Larschan, PhD. 
 
 If you want to pull the source-code, this can be done via github. 
