@@ -1,3 +1,6 @@
+Downstream & ``comparexp``
+==========================
+
 ``comparexp``
 -------------
 This is a simple way to compare and visualize two ``bindcompare`` runs. 
@@ -40,3 +43,13 @@ files with gene lists and click run. The output and GUI should look like this:
 
 As you can see, the venn diagram is rendered and the entire summary file
 will also be dumped below in the text box. 
+
+Gene Ontology and Motif Analysis
+--------------------------------
+If you provided a GTF file then your summary file would contain a gene list. You can find
+overlap type specific gene lists as well in the produced CSV files. This comma separated
+gene list can be fed into popular gene ontology packages including ShinyGO or GProfiler2.
+You would also get similar gene lists from ``comparexp`` outputs!
+
+If you provided a genome FA file, then ``bindcompare`` produces a sequences.fa that can be
+plugged into various different programs within the MEMESuite such as MEME or STREME or FIMO.

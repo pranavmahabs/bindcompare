@@ -58,7 +58,7 @@ In your command line, enter:
 .. code-block:: bash
 
    # help command
-   bindcompare
+   bindcompare -h 
    # run a bindcompare experiment
    bindcompare <ref bed> <exp bed> <scope: int> <sample name> <output dir> <GTF|None> <FA|None>
 

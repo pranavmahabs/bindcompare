@@ -2,16 +2,27 @@
    :align: center
    :width: 300
 
-.. toctree:: 
-   :maxdepth: 2
+=================================================================
+BindCompare: A novel integrated protein-binding analysis platform
+=================================================================
 
-   Introduction
-   docs/installation
-   Using BindCompare
-   docs/bindcompare
-   docs/bindexplore
-   docs/comparexp
-   Credits
+
+.. _Installation Guide: https://github.com/pranavmahabs/bindcompare/blob/main/docs/installation.rst
+.. _bindcompare: https://github.com/pranavmahabs/bindcompare/blob/main/docs/bindcompare.rst
+.. _bindexplore: https://github.com/pranavmahabs/bindcompare/blob/main/docs/bindexplore.rst
+.. _Downstream & comparexp: https://github.com/pranavmahabs/bindcompare/blob/main/docs/comparexp.rst
+
+`Introduction`_ 
+| `Installation Guide`_ 
+| `Using BindCompare`_ 
+| `Quick Start`_ 
+| `Credits`_
+
+BindCompare Function Manuals: 
+`bindcompare`_
+| `bindexplore`_
+| `Downstream & comparexp`_
+
 
 Introduction
 ============
@@ -21,7 +32,7 @@ designed to be user-accessible and interpretable. Given protein-binding
 sites on DNA and/or RNA, BindCompare determines and visualizes domains
 of co-regulatory activity at the single-nucleotide level.
 
-The main function, ``bindcompare``, performs comparitive binding analysis 
+The main function, ``bindcompare``, performs comparative binding analysis 
 for two sets of peak-called protein-binding data (either on RNA or DNA),
 elucidating specific domains of co-regulation. Further, it visualizes 
 such activity, categorizes overlapping binding domains, and prepares 
@@ -46,6 +57,24 @@ co-transcriptional regulation.
 To support user-accessible software, BindCompare can be launched in a GUI
 interface that allows for easy application of bindcompare and comparexp.
 
+Quick Start
+===========
+
+Install bindcompare and its dependencies from PyPI_ using pip::
+
+   pip install bindcompare
+
+Then, to run the core function ``bindcompare``::
+
+   bindcompare <ref bed> <exp bed> <scope: int> <sample name> <output dir> <GTF|None> <FA|None>
+
+Alternatively, to launch the core GUI application (requires a graphics setup)::
+
+   bindlaunch
+
+For a more detailed walk-through, read the full documentation below and function specific
+manuals. Complete installation instructions can also be found at 
+
 Using BindCompare
 =================
 
@@ -54,6 +83,11 @@ Here is a general overview of BindCompare usage in the following schematic.
 .. image:: ./docs/images/schematic.png
    :align: center
    :width: 400
+
+To start, optionally run `bindexplore`_ to find candidate co-regulators. Then, you
+can choose two candidate coregulators and run `bindcompare`_ to explore co-regulatory
+activities between the protein-binding datasets given. Finally, you can look into 
+downstream analysis using ``comparexp`` or gene ontology/motif analysis. 
 
 As aforementioned, ``bindcompare`` and ``comparexp`` can be run through a tkinter
 GUI interface. All of the commands can be run from the command line. This includes
