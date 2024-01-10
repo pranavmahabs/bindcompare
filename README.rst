@@ -1,4 +1,6 @@
-.. image:: https://github.com/pranavmahabs/bindcompare/blob/main/docs/images/bclogo.png
+
+
+.. image:: https://github.com/pranavmahabs/bindcompare/blob/6245bceaec40225db56107982c5d15197f5e37a8/docs/images/bclogo.png
    :align: center
    :width: 300
 
@@ -65,7 +67,7 @@ Using BindCompare
 
 Here is a general overview of BindCompare usage in the following schematic.
 
-.. image:: https://github.com/pranavmahabs/bindcompare/blob/main/docs/images/schematic.png
+.. image:: https://github.com/pranavmahabs/bindcompare/blob/6245bceaec40225db56107982c5d15197f5e37a8/docs/images/schematic.png
    :align: center
    :width: 400
 
@@ -85,7 +87,7 @@ the GUI and command line approaches. To launch the GUI:
 
 That should launch a platform that looks like this:
 
-.. image:: https://github.com/pranavmahabs/bindcompare/blob/main/docs/images/bindlaunch.png
+.. image:: https://github.com/pranavmahabs/bindcompare/blob/6245bceaec40225db56107982c5d15197f5e37a8/docs/images/bindlaunch.png
    :align: center
    :width: 350
 
