@@ -38,6 +38,7 @@ setup(
         "biopython>=1.0",
         "intervaltree>=1.0",
         "matplotlib_venn>=0.11",
+        "scipy>=1.0",
     ],
     entry_points={
         "console_scripts": [
