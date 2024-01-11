@@ -64,7 +64,7 @@ class App(customtkinter.CTk):
         self.appearance_mode_label.grid(row=5, column=0, padx=20, pady=(10, 0))
         self.appearance_mode_optionemenu = customtkinter.CTkOptionMenu(
             self.sidebar_frame,
-            values=["Light", "Dark", "System"],
+            values=["System", "Dark", "Light"],
             command=self.change_appearance_mode_event,
         )
         self.appearance_mode_optionemenu.grid(row=6, column=0, padx=20, pady=(10, 10))
