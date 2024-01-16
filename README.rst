@@ -56,7 +56,7 @@ Install bindcompare and its dependencies from PyPI using pip::
 
 Then, to run the core function ``bindcompare``::
 
-   bindcompare <ref bed> <exp bed> <scope: int> <sample name> <output dir> <GTF|None> <FA|None>
+   bindcompare -r REF -e EXP -s SCOPE -n NAME -o OUT [-g GTF] [-f FASTA]
 
 Alternatively, to launch the core GUI application, see below. For 
 a more detailed walk-through, read the full documentation below and function specific
