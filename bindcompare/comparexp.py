@@ -73,15 +73,21 @@ def verify_summary_file(folder_path):
 
 
 def main():
-    if len(sys.argv) != 3:
-        print("\nUsage: comparexp <bindpath_1> <bind_path_2>")
-        print(
-            "bindpath_1 and bindpath_2 should point to bindcompare Output Directories.\n"
-        )
-        sys.exit(1)
+    parser = argparse.ArgumentParser(
+        description="comparexp: Compare two bindcompare experiments."
+    )
 
-    folder1_path = sys.argv[1]
-    folder2_path = sys.argv[2]
+    parser.add_argument(
+        "-a", "--bindpath_1", help="Path to the first bindcompare Output Directory."
+    )
+    parser.add_argument(
+        "-b", "--bindpath_2", help="Path to the second bindcompare Output Directory."
+    )
+
+    args = parser.parse_args()
+
+    folder1_path = args.bindpath_1
+    folder2_path = args.bindpath_2
 
     # Verify summary files in both folders
     summary_files_folder1 = verify_summary_file(folder1_path)
@@ -89,6 +95,10 @@ def main():
 
     if summary_files_folder1 and summary_files_folder2:
         # Extract gene lists from summary files
+        if len(summary_files_folder1) > 1 or len(summary_files_folder2) > 1:
+            print("Error: multiple summary files detected in one of the folders.")
+            sys.exit(1)
+
         genes_folder1 = extract_genes_from_summary(summary_files_folder1[0])
         genes_folder2 = extract_genes_from_summary(summary_files_folder2[0])
 

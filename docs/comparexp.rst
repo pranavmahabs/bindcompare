@@ -23,7 +23,7 @@ The same functionality can also be achieved through the command line.
 
 .. code-block:: bash
 
-   comparexp <bindcompare outdir 1> <bindcompare outdir 2>
+   comparexp [-a outputpath_1] [-b outpath_2]
    
 Using the GUI
 ^^^^^^^^^^^^^

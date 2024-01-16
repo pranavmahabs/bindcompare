@@ -8,7 +8,7 @@ right now, can only be run from the terminal:
 
 .. code-block:: bash
 
-   bindexplore <scope> <bed_file_1> <bed_file_2> ... <bed_file_n>
+   bindexplore -s SCOPE -b <bed_file_1> <bed_file_2> ... <bed_file_n>
 
 The ``scope`` value essentially bins the genome into bins of size
 ``scope``. Then, it uses this size to search for overlaps within each

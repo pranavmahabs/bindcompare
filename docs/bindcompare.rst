@@ -16,7 +16,7 @@ This mini-schematic shows the general idea of overlapping peaks versus proximal 
 
 For both the GUI and command line approach, the following seven input options exist.
 
-#. *Base Bed File Path:* The file path for your reference BED file. If comparing DNA and RNA, then this should be the filepath for the DNA BED file or more generally, the BED file with the larger peak size.
+#. *Reference Bed File Path:* The file path for your reference BED file. If comparing DNA and RNA, then this should be the filepath for the DNA BED file or more generally, the BED file with the larger peak size.
 #. *Overlayed Bed File Path:* Enter the file path for your overlayed BED file.
 #. *Scope:* How many nucleotides upstream and downstream from the reference peak’s center that BindCompare will search for an overlap. Making this value smaller will decrease the number of overlaps and vice versa.
 #. *Sample Name:* A short phrase to label the experiment (i.e. CLAMP)
@@ -60,7 +60,7 @@ In your command line, enter:
    # help command
    bindcompare -h 
    # run a bindcompare experiment
-   bindcompare <ref bed> <exp bed> <scope: int> <sample name> <output dir> <GTF|None> <FA|None>
+   bindcompare -r REF -e EXP -s SCOPE -n NAME -o OUT [-g GTF] [-f FASTA]
 
 
 Understanding the Results
