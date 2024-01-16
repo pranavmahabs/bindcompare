@@ -21,8 +21,8 @@ For both the GUI and command line approach, the following seven input options ex
 #. *Scope:* How many nucleotides upstream and downstream from the reference peak’s center that BindCompare will search for an overlap. Making this value smaller will decrease the number of overlaps and vice versa.
 #. *Sample Name:* A short phrase to label the experiment (i.e. CLAMP)
 #. *Output Folder:* A folder’s file path where all of the outputs will be generated (will be created if it does not exist).
-#. *Genes GTF File:* This file details the chrom location of every gene in your organism. Enter ``None`` if you do not have it.
-#. *Genome FA File Path:* A FA file with a corresponding fa.fai (index file) for BedTools to extract sequences of binding sites. Enter ``None`` if you do not have it.
+#. *Genes GTF File:* This file details the chrom location of every gene in your organism. Omit the option if you do not have it. 
+#. *Genome FA File Path:* A FA file with a corresponding fa.fai (index file) for BedTools to extract sequences of binding sites. Omit the option if you do not have it. 
 
 If your BED files are for *D. Melanogaster* in the dm6 build, you may run in the command-line:
 
