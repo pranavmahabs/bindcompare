@@ -121,13 +121,18 @@ def main():
     )
 
     parser.add_argument(
-        "-s", "--scope", type=int, help="Size to bin binding sites across genome."
+        "-s",
+        "--scope",
+        type=int,
+        help="Size to bin binding sites across genome.",
+        required=True,
     )
     parser.add_argument(
         "-b",
         "--beds",
         nargs="+",
         help="BED files for exploration. Minimum of 2 required.",
+        required=True,
     )
 
     args = parser.parse_args()

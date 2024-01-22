@@ -27,7 +27,8 @@ def create_summary_file(genes_folder1, genes_folder2, prefix1, prefix2):
             genes = venn.get_label_by_id(idx).get_text().split("\n")
             venn_labels[label].extend(genes)
 
-    plt.title(f"Comparing Co-Regulatory Gene Regions for {prefix1} and {prefix2}")
+    plt.title(f"Comparing Co-Regulatory Gene Regions for \n{prefix1} and {prefix2}")
+    plt.tight_layout()
 
     venn_file_name = f"{prefix1}_v_{prefix2}_venn.png"
     # Show Venn diagram
@@ -78,10 +79,16 @@ def main():
     )
 
     parser.add_argument(
-        "-a", "--bindpath_1", help="Path to the first bindcompare Output Directory."
+        "-a",
+        "--bindpath_1",
+        help="Path to the first bindcompare Output Directory.",
+        required=True,
     )
     parser.add_argument(
-        "-b", "--bindpath_2", help="Path to the second bindcompare Output Directory."
+        "-b",
+        "--bindpath_2",
+        help="Path to the second bindcompare Output Directory.",
+        required=True,
     )
 
     args = parser.parse_args()
