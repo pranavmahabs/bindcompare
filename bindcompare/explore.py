@@ -96,8 +96,10 @@ class ProcessManager:
         plt.figure(figsize=(10, 8))
 
         plt.imshow(self.correl, cmap="viridis", interpolation="nearest")
-        plt.xticks(np.arange(self.N), self.names)
-        plt.yticks(np.arange(self.N), self.names, rotation=90)
+        # plt.xticks(np.arange(self.N), self.names)
+        # plt.yticks(np.arange(self.N), self.names, rotation=90)
+        plt.xticks(np.arange(self.N), self.names, rotation=45, ha="right")
+        plt.yticks(np.arange(self.N), self.names, rotation=45, va="center")
         plt.colorbar()
 
         # Create the Correlation Matrix
@@ -107,6 +109,9 @@ class ProcessManager:
         )
         plt.xlabel("Reference Transcription Factor", fontsize=13)
         plt.ylabel("Overlapped Transcription Factors", fontsize=13)
+
+        plt.tight_layout()
+
         plt.savefig("explore.png")
 
 
