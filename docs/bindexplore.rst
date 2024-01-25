@@ -13,9 +13,10 @@ right now, can only be run from the terminal:
 The ``scope`` value essentially bins the genome into bins of size
 ``scope``. Then, it uses this size to search for overlaps within each
 bin. Then a heatma is generated to visualize binding overlaps and can be
-seen below. The math for each cell is as follows:
-
-:math:`\\frac{ \text{Num Ref Binds found in Overlayed Sites}}{\text{Num Ref Binds}}`
+seen below. The math for each cell is the number of reference binding sites
+found in overlayed sites divided by the number of reference binds. This means
+for two values, there are two intersection values calculated, each scaled by
+the number of reference values. 
 
 .. image:: ./images/explore.png
    :align: center
