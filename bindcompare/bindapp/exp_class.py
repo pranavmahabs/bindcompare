@@ -570,7 +570,7 @@ class BindCompare:
 
         # plt.subplots_adjust(bottom=0.4)
         fig.suptitle(
-            "Per Chromosome Counts of Binding Overlaps\n Across Reference Binding Peak"
+            "Per Chromosome Counts of Binding Overlaps Across Reference Binding Peak",
         )
         fig.tight_layout()
         fig.subplots_adjust(left=0.08, right=0.92, top=0.9, bottom=0.12)

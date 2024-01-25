@@ -107,8 +107,8 @@ class ProcessManager:
             "Pair-wise Binding Overlap Frequencies",
             fontsize=16,
         )
-        plt.xlabel("Reference Transcription Factor", fontsize=13)
-        plt.ylabel("Overlapped Transcription Factors", fontsize=13)
+        plt.xlabel("Reference Binding Protein", fontsize=13)
+        plt.ylabel("Overlapped Binding Proteins", fontsize=13)
 
         plt.tight_layout()
 
