@@ -99,7 +99,7 @@ concentrated on the X chromosome.
 
 .. image:: ./images/chrom_ref_freq.png
     :align: center
-    :width: 100
+    :width: 250
 
 Bar Summary (_barsummary.png)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -15,14 +15,13 @@ The ``scope`` value essentially bins the genome into bins of size
 bin. Then a heatma is generated to visualize binding overlaps and can be
 seen below. The math for each cell is as follows:
 
-.. math:: 
-
-   \frac{ \text{Num Ref Binds found in Overlayed Sites}}{\text{Num Ref Binds}}
+:math:`\\frac{ \text{Num Ref Binds found in Overlayed Sites}}{\text{Num Ref Binds}}`
 
 .. image:: ./images/explore.png
    :align: center
    :width: 250
 
-In this example, we see that we are comparing CLAMP binding in KC and S2
-Cells, GAF Binding, and MLE Binding. Understandably, CLAMP KC and S2 has
-a significant overlap!
+In this example, we are comparing 17 *H. Sapiens* RNA Binding Proteins. 
+Observing this matrix, we can see specific pairs of proteins that have high binding overlaps genome-wide. 
+Once such pair is  HNRNPA1 and SFPQ (almost all SFPQ binding sites seem to overlap with a HNRNPA1 RNA binding site).
+These pairs would be excellent canidates for ``bindcompare`` experiments.
