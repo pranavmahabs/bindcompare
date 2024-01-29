@@ -1,5 +1,6 @@
 import argparse
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 
 from multiprocessing import Process, Manager, Pool, cpu_count
@@ -61,13 +62,14 @@ class BedProcessor:
 
 
 class ProcessManager:
-    def __init__(self, bed_files: list) -> None:
+    def __init__(self, bed_files: list, name: str) -> None:
         self.manager = Manager()
         self.global_dict = self.manager.dict()
         self.processors = [BedProcessor(bf) for bf in bed_files]
         self.names = [bf.name for bf in self.processors]
         self.N = len(self.names)
         self.correl = np.ones((self.N, self.N))
+        self.identity = name
 
     def process_bed_files(self, bin_size: int):
         for processor in self.processors:
@@ -112,7 +114,11 @@ class ProcessManager:
 
         plt.tight_layout()
 
-        plt.savefig("explore.png")
+        plt.savefig(f"{self.identity}_explore.png")
+
+    def generate_csv_matrix(self):
+        df = pd.DataFrame(data=self.correl, index=self.names, columns=self.names)
+        df.to_csv(f"{self.identity}_explore.csv")
 
 
 def main():
@@ -134,17 +140,26 @@ def main():
         help="BED files for exploration. Minimum of 2 required.",
         required=True,
     )
+    parser.add_argument(
+        "-n",
+        "--name",
+        help="Name to provide bindexplore experiment. Will be the prefix for outputs.",
+        type=str,
+        required=True,
+    )
 
     args = parser.parse_args()
 
     scope = args.scope
     beds = args.beds
+    name = args.name
 
     if len(beds) < 2:
         print("\nError: Minimum of 2 BED files required.\n")
         parser.print_usage()
         sys.exit(1)
 
-    pm = ProcessManager(bed_files=beds)
+    pm = ProcessManager(bed_files=beds, name=name)
     pm.process_bed_files(bin_size=scope)
     pm.plot_correlation_matrix()
+    pm.generate_csv_matrix()

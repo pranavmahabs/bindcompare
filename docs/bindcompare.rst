@@ -24,6 +24,8 @@ For both the GUI and command line approach, the following seven input options ex
 #. *Genes GTF File:* This file details the chrom location of every gene in your organism. Omit the option if you do not have it. 
 #. *Genome FA File Path:* A FA file with a corresponding fa.fai (index file) for BedTools to extract sequences of binding sites. Omit the option if you do not have it. 
 
+If you are comparing anything containing DNA, we recommend a scope of 1000bp. If only comparing RNA, a scope of 250bp will suffice. 
+
 If your BED files are for *D. Melanogaster* in the dm6 build, you may run in the command-line:
 
 .. code-block:: bash
