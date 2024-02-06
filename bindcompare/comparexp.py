@@ -49,11 +49,11 @@ def create_summary_file(genes_folder1, genes_folder2, prefix1, prefix2):
     with open(summary_file_name, "w") as summary_file:
         summary_file.write(f"Jaccard Similarity: {jaccard_similarity:.4f}\n")
         summary_file.write(
-            f"Genes Exclusive to {prefix1}: {', '.join(exclusive_to_folder1)}\n"
+            f"Genes Exclusive to {prefix1}: {' '.join(exclusive_to_folder1)}\n"
         )
-        summary_file.write(f"Genes in Both Samples: {', '.join(common_genes)}\n")
+        summary_file.write(f"Genes in Both Samples: {' '.join(common_genes)}\n")
         summary_file.write(
-            f"Genes Exclusive to {prefix2}: {', '.join(exclusive_to_folder2)}\n"
+            f"Genes Exclusive to {prefix2}: {' '.join(exclusive_to_folder2)}\n"
         )
 
     return summary_file_name

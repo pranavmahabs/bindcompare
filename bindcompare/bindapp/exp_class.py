@@ -662,7 +662,7 @@ class BindCompare:
                 )
                 all_genes = ""
                 for gene in list(bc_dict["all_genes"]):
-                    all_genes += gene + ","
+                    all_genes += gene + " "
                 summary.write(f"List of All Genes:\n{all_genes}")
 
     def generate_all(self, bc_dict: dict, outpath: str, name: str, gtf: GTF = None):
