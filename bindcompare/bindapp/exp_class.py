@@ -88,7 +88,9 @@ class Chromosome:
                 for r_interval in overlaps:
                     r_beg, r_end, ref_bind = r_interval
                     overlap, upper, lower = self.within((e_beg, e_end), ref_bind)
-                    if exp_bind[0] >= ref_bind[0] and exp_bind[1] <= ref_bind[1]:
+                    if (exp_bind[0] >= ref_bind[0] and exp_bind[1] <= ref_bind[1]) or (
+                        exp_bind[0] <= ref_bind[0] and exp_bind[1] >= ref_bind[1]
+                    ):
                         # The EXP peak is fully contained by the REF peak
                         self.overlap_full_it.extend(overlap)
                         ot = "CRO"
