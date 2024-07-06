@@ -1,5 +1,6 @@
+import argparse
 import numpy as np
-
+import pandas as pd
 import matplotlib.pyplot as plt
 
 from multiprocessing import Process, Manager, Pool, cpu_count
@@ -61,13 +62,14 @@ class BedProcessor:
 
 
 class ProcessManager:
-    def __init__(self, bed_files: list) -> None:
+    def __init__(self, bed_files: list, name: str) -> None:
         self.manager = Manager()
         self.global_dict = self.manager.dict()
         self.processors = [BedProcessor(bf) for bf in bed_files]
         self.names = [bf.name for bf in self.processors]
         self.N = len(self.names)
         self.correl = np.ones((self.N, self.N))
+        self.identity = name
 
     def process_bed_files(self, bin_size: int):
         for processor in self.processors:
@@ -96,8 +98,10 @@ class ProcessManager:
         plt.figure(figsize=(10, 8))
 
         plt.imshow(self.correl, cmap="viridis", interpolation="nearest")
-        plt.xticks(np.arange(self.N), self.names)
-        plt.yticks(np.arange(self.N), self.names, rotation=90)
+        # plt.xticks(np.arange(self.N), self.names)
+        # plt.yticks(np.arange(self.N), self.names, rotation=90)
+        plt.xticks(np.arange(self.N), self.names, rotation=45, ha="right")
+        plt.yticks(np.arange(self.N), self.names, rotation=45, va="center")
         plt.colorbar()
 
         # Create the Correlation Matrix
@@ -105,26 +109,57 @@ class ProcessManager:
             "Pair-wise Binding Overlap Frequencies",
             fontsize=16,
         )
-        plt.xlabel("Reference Transcription Factor", fontsize=13)
-        plt.ylabel("Overlapped Transcription Factors", fontsize=13)
-        plt.savefig("explore.png")
+        plt.xlabel("Reference Binding Protein", fontsize=13)
+        plt.ylabel("Overlapped Binding Proteins", fontsize=13)
+
+        plt.tight_layout()
+
+        plt.savefig(f"{self.identity}_explore.png")
+
+    def generate_csv_matrix(self):
+        df = pd.DataFrame(data=self.correl, index=self.names, columns=self.names)
+        df.to_csv(f"{self.identity}_explore.csv")
 
 
 def main():
-    usage = "Usage: bindexplore <scope: int> <bed file 1> <bed file 2> ...\n"
-    if len(sys.argv) == 1:
-        print("\nError: No scope or BED file provided.\n" + usage)
-        sys.exit(1)
-    if not sys.argv[1].isnumeric():
-        print("\nError: Integer scope not provided.\n" + usage)
-        sys.exit(1)
-    if len(sys.argv) < 4:
-        print("\nError: Only 1 or less BED files provided.\n" + usage)
+    parser = argparse.ArgumentParser(
+        description="bindexplore: Identify candidate co-regulators."
+    )
+
+    parser.add_argument(
+        "-s",
+        "--scope",
+        type=int,
+        help="Size to bin binding sites across genome.",
+        required=True,
+    )
+    parser.add_argument(
+        "-b",
+        "--beds",
+        nargs="+",
+        help="BED files for exploration. Minimum of 2 required.",
+        required=True,
+    )
+    parser.add_argument(
+        "-n",
+        "--name",
+        help="Name to provide bindexplore experiment. Will be the prefix for outputs.",
+        type=str,
+        required=True,
+    )
+
+    args = parser.parse_args()
+
+    scope = args.scope
+    beds = args.beds
+    name = args.name
+
+    if len(beds) < 2:
+        print("\nError: Minimum of 2 BED files required.\n")
+        parser.print_usage()
         sys.exit(1)
 
-    scope = int(sys.argv[1])
-    beds = sys.argv[2:]
-
-    pm = ProcessManager(bed_files=beds)
+    pm = ProcessManager(bed_files=beds, name=name)
     pm.process_bed_files(bin_size=scope)
     pm.plot_correlation_matrix()
+    pm.generate_csv_matrix()

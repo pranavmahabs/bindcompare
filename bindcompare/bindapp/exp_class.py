@@ -88,7 +88,9 @@ class Chromosome:
                 for r_interval in overlaps:
                     r_beg, r_end, ref_bind = r_interval
                     overlap, upper, lower = self.within((e_beg, e_end), ref_bind)
-                    if exp_bind[0] >= ref_bind[0] and exp_bind[1] <= ref_bind[1]:
+                    if (exp_bind[0] >= ref_bind[0] and exp_bind[1] <= ref_bind[1]) or (
+                        exp_bind[0] <= ref_bind[0] and exp_bind[1] >= ref_bind[1]
+                    ):
                         # The EXP peak is fully contained by the REF peak
                         self.overlap_full_it.extend(overlap)
                         ot = "CRO"
@@ -471,11 +473,16 @@ class BindCompare:
         There will be at most 3 plots on each row and there will be however many rows needed to fit all the chromosomes.
         """
         # Determine Number of Chromosomes
-        chroms = list(self.experiments.keys())
+        chroms = sorted(
+            list(self.experiments.keys()),
+            key=lambda x: (x.isdigit(), int(x) if x.isdigit() else x),
+        )
         Nchroms = len(chroms)
 
+        num_rows = Nchroms // 3
+        num_rows = num_rows if num_rows * 3 == Nchroms else num_rows + 1
         fig, axs = plt.subplots(
-            Nchroms, 1, sharex=True, sharey="all", figsize=(4, Nchroms + 3)
+            num_rows, 3, sharex=True, sharey="all", figsize=(13, Nchroms // 2 + 3)
         )
         if Nchroms == 1:
             axs = [axs]
@@ -514,11 +521,6 @@ class BindCompare:
                 # z = moving_average(z, 20)
                 ax2.plot(x, z, c=color, alpha=0.7)
 
-            if (i + 1) % Nchroms == 0:
-                ax.set_xlabel("Distance from Reference Peak Midpoint")
-            if i == int(Nchroms / 2):
-                ax.set_ylabel("Frequency of Reference Peaks")
-                ax2.set_ylabel("Overlaps Counts")
             ax.set_title(f"Chromosome {chrom}")
 
         # Create a custom legend outside the function
@@ -529,20 +531,51 @@ class BindCompare:
             plt.Line2D([0], [0], color="b", lw=2, label="ORE"),
             plt.Line2D([0], [0], color="y", lw=2, label="PXP"),
         ]
-        plt.legend(
+        fig.legend(
             handles=custom_legend,
-            loc="upper center",
-            bbox_to_anchor=(0.55, -0.5),
+            loc="lower center",
             fancybox=True,
             shadow=True,
-            fontsize=7,
-            ncol=3,
+            fontsize=11,
+            ncol=5,
+        ).set_bbox_to_anchor((0.5, 0.0))
+        # Set x-axis label at the center of the left
+        fig.text(
+            0.5,
+            0.07,
+            "Distance from Reference Peak Midpoint",
+            ha="center",
+            va="center",
+            fontsize=12,
         )
-        plt.subplots_adjust(bottom=0.4)
+
+        # Set y-axis label at the center of the bottom
+        fig.text(
+            0.02,
+            0.5,
+            "Frequency of Reference Peaks",
+            ha="center",
+            va="center",
+            rotation="vertical",
+            fontsize=12,
+        )
+
+        fig.text(
+            0.98,
+            0.5,
+            "Overlaps Counts",
+            ha="center",
+            va="center",
+            rotation="vertical",
+            fontsize=12,
+        )
+
+        # plt.subplots_adjust(bottom=0.4)
         fig.suptitle(
-            "Per Chromosome Counts of Binding Overlaps\n Across Reference Binding Peak"
+            "Per Chromosome Counts of Binding Overlaps Across Reference Binding Peak",
         )
-        plt.tight_layout(rect=[0, 0, 1, 1])
+        fig.tight_layout()
+        fig.subplots_adjust(left=0.08, right=0.92, top=0.9, bottom=0.12)
         plt.savefig(filepath + "_chrom_ref_freq.png", dpi=300)
         plt.close()
 
@@ -631,7 +664,7 @@ class BindCompare:
                 )
                 all_genes = ""
                 for gene in list(bc_dict["all_genes"]):
-                    all_genes += gene + ","
+                    all_genes += gene + " "
                 summary.write(f"List of All Genes:\n{all_genes}")
 
     def generate_all(self, bc_dict: dict, outpath: str, name: str, gtf: GTF = None):

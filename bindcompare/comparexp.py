@@ -27,7 +27,8 @@ def create_summary_file(genes_folder1, genes_folder2, prefix1, prefix2):
             genes = venn.get_label_by_id(idx).get_text().split("\n")
             venn_labels[label].extend(genes)
 
-    plt.title(f"Comparing Co-Regulatory Gene Regions for {prefix1} and {prefix2}")
+    plt.title(f"Comparing Co-Regulatory Gene Regions for \n{prefix1} and {prefix2}")
+    plt.tight_layout()
 
     venn_file_name = f"{prefix1}_v_{prefix2}_venn.png"
     # Show Venn diagram
@@ -48,11 +49,11 @@ def create_summary_file(genes_folder1, genes_folder2, prefix1, prefix2):
     with open(summary_file_name, "w") as summary_file:
         summary_file.write(f"Jaccard Similarity: {jaccard_similarity:.4f}\n")
         summary_file.write(
-            f"Genes Exclusive to {prefix1}: {', '.join(exclusive_to_folder1)}\n"
+            f"Genes Exclusive to {prefix1}: {' '.join(exclusive_to_folder1)}\n"
         )
-        summary_file.write(f"Genes in Both Samples: {', '.join(common_genes)}\n")
+        summary_file.write(f"Genes in Both Samples: {' '.join(common_genes)}\n")
         summary_file.write(
-            f"Genes Exclusive to {prefix2}: {', '.join(exclusive_to_folder2)}\n"
+            f"Genes Exclusive to {prefix2}: {' '.join(exclusive_to_folder2)}\n"
         )
 
     return summary_file_name
@@ -73,15 +74,27 @@ def verify_summary_file(folder_path):
 
 
 def main():
-    if len(sys.argv) != 3:
-        print("\nUsage: comparexp <bindpath_1> <bind_path_2>")
-        print(
-            "bindpath_1 and bindpath_2 should point to bindcompare Output Directories.\n"
-        )
-        sys.exit(1)
+    parser = argparse.ArgumentParser(
+        description="comparexp: Compare two bindcompare experiments."
+    )
 
-    folder1_path = sys.argv[1]
-    folder2_path = sys.argv[2]
+    parser.add_argument(
+        "-a",
+        "--bindpath_1",
+        help="Path to the first bindcompare Output Directory.",
+        required=True,
+    )
+    parser.add_argument(
+        "-b",
+        "--bindpath_2",
+        help="Path to the second bindcompare Output Directory.",
+        required=True,
+    )
+
+    args = parser.parse_args()
+
+    folder1_path = args.bindpath_1
+    folder2_path = args.bindpath_2
 
     # Verify summary files in both folders
     summary_files_folder1 = verify_summary_file(folder1_path)
@@ -89,6 +102,10 @@ def main():
 
     if summary_files_folder1 and summary_files_folder2:
         # Extract gene lists from summary files
+        if len(summary_files_folder1) > 1 or len(summary_files_folder2) > 1:
+            print("Error: multiple summary files detected in one of the folders.")
+            sys.exit(1)
+
         genes_folder1 = extract_genes_from_summary(summary_files_folder1[0])
         genes_folder2 = extract_genes_from_summary(summary_files_folder2[0])
 

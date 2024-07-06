@@ -1,6 +1,6 @@
 
 
-.. figure:: https://github.com/pranavmahabs/bindcompare/blob/6245bceaec40225db56107982c5d15197f5e37a8/docs/images/bclogo.png
+.. image:: https://pranavmahabs.github.io/bindcompare/docs/images/bclogo.png
    :align: center
    :width: 300
 
@@ -56,7 +56,7 @@ Install bindcompare and its dependencies from PyPI using pip::
 
 Then, to run the core function ``bindcompare``::
 
-   bindcompare <ref bed> <exp bed> <scope: int> <sample name> <output dir> <GTF|None> <FA|None>
+   bindcompare -r REF -e EXP -s SCOPE -n NAME -o OUT [-g GTF] [-f FASTA]
 
 Alternatively, to launch the core GUI application, see below. For 
 a more detailed walk-through, read the full documentation below and function specific
@@ -67,7 +67,7 @@ Using BindCompare
 
 Here is a general overview of BindCompare usage in the following schematic.
 
-.. figure:: https://github.com/pranavmahabs/bindcompare/blob/6245bceaec40225db56107982c5d15197f5e37a8/docs/images/schematic.png
+.. image:: https://pranavmahabs.github.io/bindcompare/docs/images/schematic.png
    :align: center
    :width: 400
 
@@ -87,7 +87,7 @@ the GUI and command line approaches. To launch the GUI:
 
 That should launch a platform that looks like this:
 
-.. figure:: https://github.com/pranavmahabs/bindcompare/blob/6245bceaec40225db56107982c5d15197f5e37a8/docs/images/bindlaunch.png
+.. figure:: https://pranavmahabs.github.io/bindcompare/docs/images/bindlaunch.png
    :align: center
    :width: 350
 

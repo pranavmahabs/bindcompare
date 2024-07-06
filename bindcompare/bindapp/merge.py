@@ -55,8 +55,11 @@ def main(
         )
 
     # # Gene Coordinate Section
-    gtf = GTF(gtf)
-    gtf.process_gtf()
+    if gtf == "None":
+        gtf = None
+    else:
+        gtf = GTF(gtf)
+        gtf.process_gtf()
 
     # Get the BC Dictionary for All Chromosomes
     exp.compare_binds()

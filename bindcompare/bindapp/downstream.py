@@ -29,9 +29,9 @@ def get_chrom2seq(FASTA_FILE, capitalize=True):
 
 def downstream(input_genes: str, fasta: str, outdir: str):
     if fasta == "None":
-        os.write(2, b"Skipping Sequence Extraction and Motif Analysis...\n")
+        os.write(2, b"Skipping Sequence Extraction...\n")
     else:
-        os.write(2, b"Completed BED Merge... starting sequence extration!\n")
+        os.write(2, b"Completed BED Merge... starting sequence extraction!\n")
         df = pd.read_csv(input_genes)
         bed = df[["Chrom", "Begin Ref Site", "End Ref Site"]]
 

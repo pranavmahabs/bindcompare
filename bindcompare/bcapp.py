@@ -213,7 +213,11 @@ class App(customtkinter.CTk):
         )
         self.image_dropdown_label.grid(row=1, column=0, columnspan=2, padx=(0, 50))
 
-        self.image_dropdown = customtkinter.CTkComboBox(self.visualize_frame, width=200)
+        self.image_dropdown = customtkinter.CTkComboBox(
+            self.visualize_frame,
+            width=200,
+            values=["Image Dropdown"],
+        )
         self.image_dropdown.grid(row=1, column=1, columnspan=2, padx=(44, 0))
 
         self.show_image_button = customtkinter.CTkButton(
@@ -235,6 +239,7 @@ class App(customtkinter.CTk):
         help_options.remove("General Help")
         self.interpret_menu = customtkinter.CTkComboBox(
             self.visualize_frame,
+            values=["Help Menu"],
         )
         self.interpret_menu.configure(values=help_options)
         self.interpret_menu.grid(
@@ -350,17 +355,31 @@ class App(customtkinter.CTk):
         entry.delete(0, tkinter.END)
         entry.insert(tkinter.END, "Launching BindCompare... status in terminal.")
 
+        gtf = self.gtf_entry.get()
+        if len(self.gtf_entry.get()) == 0:
+            gtf = "None"
+        fa = self.fa_entry.get()
+        if len(self.fa_entry.get()) == 0:
+            fa = "None"
+
         # Launching Merge
         subprocess.run(
             [
                 "bindcompare",
+                "--ref",
                 self.ref_entry.get(),
+                "--exp",
                 self.exp_entry.get(),
+                "--scope",
                 self.scope.get(),
+                "--name",
                 self.name.get(),
+                "--out",
                 self.outdir_entry.get(),
-                self.gtf_entry.get(),
-                self.fa_entry.get(),
+                "--gtf",
+                gtf,
+                "--fasta",
+                fa,
             ]
         )
         entry.delete(0, tkinter.END)
@@ -370,7 +389,9 @@ class App(customtkinter.CTk):
         subprocess.run(
             [
                 "comparexp",
+                "--bindpath_1",
                 self.entry_one.get(),
+                "--bindpath_2",
                 self.entry_two.get(),
             ]
         )
@@ -426,7 +447,10 @@ class App(customtkinter.CTk):
 
     def show_selected_image2(self):
         image_path = self.get_comparexp_name()[0]
-        self.load_and_display_image2(image_path)
+        if not os.path.exists(image_path):
+            print(f"'{image_path}' not found. comparexp likely failed.")
+        else:
+            self.load_and_display_image2(image_path)
 
     def load_and_display_image2(self, image_path):
         image = customtkinter.CTkImage(
@@ -438,9 +462,12 @@ class App(customtkinter.CTk):
     def fill_comparexp(self):
         text_path = self.get_comparexp_name()[1]
         text = ""
-        with open(text_path, "r") as handle:
-            for line in handle:
-                text += line + "\n"
+        if not os.path.exists(text_path):
+            text = f"'{text_path}' not found. comparexp likely failed."
+        else:
+            with open(text_path, "r") as handle:
+                for line in handle:
+                    text += line + "\n"
         self.compare_out.delete(1.0, tkinter.END)
         self.compare_out.insert(tkinter.END, text)
 

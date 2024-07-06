@@ -16,13 +16,15 @@ This mini-schematic shows the general idea of overlapping peaks versus proximal 
 
 For both the GUI and command line approach, the following seven input options exist.
 
-#. *Base Bed File Path:* The file path for your reference BED file. If comparing DNA and RNA, then this should be the filepath for the DNA BED file or more generally, the BED file with the larger peak size.
+#. *Reference Bed File Path:* The file path for your reference BED file. If comparing DNA and RNA, then this should be the filepath for the DNA BED file or more generally, the BED file with the larger peak size.
 #. *Overlayed Bed File Path:* Enter the file path for your overlayed BED file.
 #. *Scope:* How many nucleotides upstream and downstream from the reference peak’s center that BindCompare will search for an overlap. Making this value smaller will decrease the number of overlaps and vice versa.
 #. *Sample Name:* A short phrase to label the experiment (i.e. CLAMP)
 #. *Output Folder:* A folder’s file path where all of the outputs will be generated (will be created if it does not exist).
-#. *Genes GTF File:* This file details the chrom location of every gene in your organism. Enter ``None`` if you do not have it.
-#. *Genome FA File Path:* A FA file with a corresponding fa.fai (index file) for BedTools to extract sequences of binding sites. Enter ``None`` if you do not have it.
+#. *Genes GTF File:* This file details the chrom location of every gene in your organism. Omit the option if you do not have it. 
+#. *Genome FA File Path:* A FA file with a corresponding fa.fai (index file) for BedTools to extract sequences of binding sites. Omit the option if you do not have it. 
+
+If you are comparing anything containing DNA, we recommend a scope of 1000bp. If only comparing RNA, a scope of 250bp will suffice. 
 
 If your BED files are for *D. Melanogaster* in the dm6 build, you may run in the command-line:
 
@@ -60,7 +62,7 @@ In your command line, enter:
    # help command
    bindcompare -h 
    # run a bindcompare experiment
-   bindcompare <ref bed> <exp bed> <scope: int> <sample name> <output dir> <GTF|None> <FA|None>
+   bindcompare -r REF -e EXP -s SCOPE -n NAME -o OUT [-g GTF] [-f FASTA]
 
 
 Understanding the Results
@@ -99,7 +101,7 @@ concentrated on the X chromosome.
 
 .. image:: ./images/chrom_ref_freq.png
     :align: center
-    :width: 100
+    :width: 250
 
 Bar Summary (_barsummary.png)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
