@@ -27,7 +27,7 @@ def main(
     out_name: str,
     gtf: str,
 ):
-    os.write(2, b"Beginning BindCompare!\n")
+    os.write(1, b"Beginning BindCompare!\n")
 
     # Initialize the BED Files
     base_bed = Bed(base_bed)

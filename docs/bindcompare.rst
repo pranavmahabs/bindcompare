@@ -43,8 +43,9 @@ Other than *scope* and *sample name*, you can utilize the built-in file-finder t
 choose the correct file you are interested in using. Note that this will force you to have already
 created the output directory as you would otherwise be unable to select it.
 
-Once you have filled all of the inputs in, you can click the blue Run BindCompare button. If there
-is any outputs or errors, this will show up in your terminal - not in the app. Once BindCompare
+Once you have filled all of the inputs in, you can click the blue Run BindCompare button. This 
+will change the status bar to say that `bindcompare` is running. If there
+are any outputs or errors, this will show up in the app's output window. Once BindCompare
 has completed, the status bar should change to reflect this. 
 
 Finally, on the right hand side you can choose to do mini-visualizations of the plots generated. If
@@ -78,7 +79,7 @@ This is a sample overlap profile. An overlap is defined in four ways:
 1. Completely overlapping (purple lines, CRO). 2. Partially
 overlapping at the DNA peak start site (red lines, ORF). 3.
 Partially overlapping at the DNA peak end site (blue lines, ORE) 
-4. Non-overlapping but proximal, i.e. when there is an peak in a region
+1. Non-overlapping but proximal, i.e. when there is an peak in a region
 outside the reference binding site (yellow lines, PXP). Note that
 these are categories are for experimental peaks overlayed on a reference peak.
 

@@ -39,14 +39,18 @@ class BedProcessor:
                     continue
                 if str.isnumeric(bed_row[1]) and str.isnumeric(bed_row[2]):
                     start = int(bed_row[1])
+                    stop = int(bed_row[2])
                 else:
                     continue
 
                 bin_id = int(start / bin_size)
+                end_bin_id = int(stop / bin_size)
                 if chrom not in self.global_dict:
                     self.global_dict[chrom] = []
                     self.counts[chrom] = 0
                 self.global_dict[chrom].append(bin_id)
+                if end_bin_id != bin_id:
+                    self.global_dict[chrom].append(bin_id)
                 self.counts[chrom] += 1
 
         total_sites = 0
@@ -90,14 +94,14 @@ class ProcessManager:
         )
         self.correl[i, j]
 
-    def plot_correlation_matrix(self):
+    def plot_correlation_matrix(self, cmap: str):
         indices = [(i, j) for i in range(self.N) for j in range(self.N)]
         for index_pair in indices:
             self.overlap(index_pair)
 
         plt.figure(figsize=(10, 8))
 
-        plt.imshow(self.correl, cmap="viridis", interpolation="nearest")
+        plt.imshow(self.correl, cmap=cmap, interpolation="nearest")
         # plt.xticks(np.arange(self.N), self.names)
         # plt.yticks(np.arange(self.N), self.names, rotation=90)
         plt.xticks(np.arange(self.N), self.names, rotation=45, ha="right")
@@ -147,12 +151,21 @@ def main():
         type=str,
         required=True,
     )
+    parser.add_argument(
+        "-c",
+        "--color_map",
+        type=str,
+        help="Any valid matplotlib imshow color map. Default yellow-red, 'viridis' for blue-green.",
+        default="YlOrRd",
+        required=False,
+    )
 
     args = parser.parse_args()
 
     scope = args.scope
     beds = args.beds
     name = args.name
+    cmap = args.color_map
 
     if len(beds) < 2:
         print("\nError: Minimum of 2 BED files required.\n")
@@ -161,5 +174,5 @@ def main():
 
     pm = ProcessManager(bed_files=beds, name=name)
     pm.process_bed_files(bin_size=scope)
-    pm.plot_correlation_matrix()
+    pm.plot_correlation_matrix(cmap=cmap)
     pm.generate_csv_matrix()
