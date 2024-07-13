@@ -43,7 +43,7 @@ The order of comparison matters due to normalization. When comparing A vs. B, th
 
 .. image:: ./images/explore.png
    :align: center
-   :width: 220
+   :width: 400
 
 For example, in the figure above, we have run ``bindexplore`` on 17 RNA binding proteins (RBPs). When HNRNPA1 is the overlapped binding protein, correlation matrix values are quite high (see row 3). However, when HNRNPA1 is the reference (column 3), correlation matrix values are much lower. This indicates that HNRNPA1 has low specificity and bins along with many different RBPs but few RBPs, such as TAF15, appear alongside all HNRNPA1 sites with high frequency. 
 
@@ -62,7 +62,7 @@ Here, we will provide a concrete example and how it could be interpreted. Here w
 
 .. image:: ./images/taf15_fus_dna.png
    :align: center
-   :width: 280
+   :width: 220
 
 Next we have TAF15 DNA binding compared to its RNA binding.
 
