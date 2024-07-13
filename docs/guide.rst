@@ -1,4 +1,4 @@
-BindCompare User Guide
+BindCompare User/Interpretation Guide
 ======================
 
 This guide will walk you through the BindCompare workflow, how to choose a scope, how to interpret BindExplore results, and how to understand the overlap profiles.
@@ -8,32 +8,18 @@ Workflow
 
 The BindCompare workflow consists of three main steps. Make sure that you have properly peak-called your data prior to using the BindCompare platform. If you are interested in gene/sequence information, make you have the appropriate respective genome GTF file or FASTA file.
 
-**BindExplore**:
+To start, optionally run ``bindexplore`` to find candidate co-regulators. Then, you
+can choose two candidate coregulators and run ``bindcompare`` to explore co-regulatory
+activities between the protein-binding datasets given. Finally, you can look into 
+downstream analysis using ``comparexp`` or gene ontology/motif analysis. 
 
-`bindexplore` analyzes binding overlaps across . This step includes generating heatmaps and CSV files that summarize the overlap of binding sites across different conditions.
-
-3. **BindCompare**:
-   - Use the `bindcompare` tool to compare binding interactions between different conditions or proteins.
-   - This step involves generating detailed overlap profiles and other visualizations.
-
-4. **CompExp**:
-   - Run the `comparexp` tool to perform additional comparative analyses and generate comprehensive reports.
+Make sure to look at the relevant docs page (accessible from the home page) to determine how to run these methods. 
 
 Interpreting and Using BindCompare
 ##################################
 
-Choosing a Scope
-----------------
-
-The scope determines the region around each reference binding site to be considered for overlap analysis. Choosing an appropriate scope is crucial for accurate interpretation:
-
-- **Default Scope**: The default scope is typically set to 2 kb, which includes the DNA binding site and 1 kb upstream and downstream.
-- **Adjusting Scope**: Depending on your data and research question, you may need to adjust the scope. For instance, if you are studying interactions over a larger genomic region, you might increase the scope.
-
-Consider the biological context of your study when choosing the scope. A larger scope may capture more interactions but could also introduce more noise.
-
-Interpreting BindExplore
--------------------------
+Interpreting ``bindexplore``
+----------------------------
 
 BindExplore generates visualizations and data that help you understand the binding interactions:
 
@@ -46,7 +32,7 @@ If the yielded results seem overly diluted (i.e. you are capturing too many over
 Normalization and Binning
 +++++++++++++++++++++++++
 
-BindExplore normalizes the interaction scores by scaling counts based on the number of reference peaks. This prevents skewing results towards proteins with low specificity. It also allows us to compare all pairs within the same 0-1 range. 
+``bindexplore`` normalizes the interaction scores by scaling counts based on the number of reference peaks. This prevents skewing results towards proteins with low specificity. It also allows us to compare all pairs within the same 0-1 range. 
 
 If two peaks from different datasets fall within the same bin (e.g., 5 kb) but do not strictly overlap, they are still considered in the intersection. Bins are used for intersecting lists rather than individual peaks, which helps in summarizing the binding interactions more effectively.
 
@@ -59,12 +45,12 @@ The order of comparison matters due to normalization. When comparing A vs. B, th
    :align: center
    :width: 220
 
-For example, in the figure above, we have run `bindexplore` on 17 RNA binding proteins (RBPs). When HNRNPA1 is the overlapped binding protein, correlation matrix values are quite high (see row 3). However, when HNRNPA1 is the reference (column 3), correlation matrix values are much lower. This indicates that HNRNPA1 has low specificity and bins along with many different RBPs but few RBPs, such as TAF15, appear alongside all HNRNPA1 sites with high frequency. 
+For example, in the figure above, we have run ``bindexplore`` on 17 RNA binding proteins (RBPs). When HNRNPA1 is the overlapped binding protein, correlation matrix values are quite high (see row 3). However, when HNRNPA1 is the reference (column 3), correlation matrix values are much lower. This indicates that HNRNPA1 has low specificity and bins along with many different RBPs but few RBPs, such as TAF15, appear alongside all HNRNPA1 sites with high frequency. 
 
-Interpreting bindcompare
-------------------------
+Interpreting ``bindcompare``
+----------------------------
 
-The overlap profile plot is a key output of BindCompare, providing detailed insights into binding interactions. A comprehensive interpretation guide is provided in the `bindcompare docs page <https://github.com/pranavmahabs/bindcompare/blob/main/docs/bindcompare.rst>`__. 
+The overlap profile plot is a key output of ``bindcompare``, providing detailed insights into binding interactions. A comprehensive interpretation guide is provided in the ``bindcompare`` `docs page <https://github.com/pranavmahabs/bindcompare/blob/main/docs/bindcompare.rst>`__. 
 
 Choosing a Scope
 ++++++++++++++++
@@ -72,13 +58,11 @@ We have used a default of 1000bp scope region when comparing DNA peaks. While co
 
 Overlap Profiles
 ++++++++++++++++
-Here, we will provide a concrete example and how it could be interpreted.
-
-Here we have two comparisons, first TAF15 binding compared to FUS DNA binding. 
+Here, we will provide a concrete example and how it could be interpreted. Here we have two comparisons, first TAF15 binding compared to FUS DNA binding. 
 
 .. image:: ./images/taf15_fus_dna.png
    :align: center
-   :width: 220
+   :width: 280
 
 Next we have TAF15 DNA binding compared to its RNA binding.
 
