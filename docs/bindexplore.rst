@@ -8,7 +8,7 @@ right now, can only be run from the terminal:
 
 .. code-block:: bash
 
-   bindexplore -s SCOPE -n NAME -b <bed_file_1> <bed_file_2> ... <bed_file_n>
+   bindexplore -s SCOPE -n NAME -c COLOR_MAP -b <bed_file_1> <bed_file_2> ... <bed_file_n>
 
 The ``scope`` value essentially bins the genome into bins of size
 ``scope``. Then, it uses this size to search for overlaps within each
@@ -21,6 +21,11 @@ found in overlayed sites divided by the number of reference binds. This means
 for two values, there are two intersection values calculated, each scaled by
 the number of reference values. The ``name`` flag allows you to specify a name for the experiment that is the prefix
 for the provided outputs. 
+
+The default color map produced by `bindexplore` uses a Yellow to Red color scheme. 
+If you would like to use a different one, you may specify a supported
+matplotlib color map (i.e. "viridis" for blue-green). If you specify one not supported
+by matplotlib, it will print a list of supported color maps. 
 
 The two outputs are the explore heatmap shown below and a 
 CSV table that includes the values that the explore heatmap is based upon. 

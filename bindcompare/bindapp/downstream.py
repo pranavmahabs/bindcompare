@@ -29,62 +29,68 @@ def get_chrom2seq(FASTA_FILE, capitalize=True):
 
 def downstream(input_genes: str, fasta: str, outdir: str):
     if fasta == "None":
-        os.write(2, b"Skipping Sequence Extraction...\n")
+        os.write(1, b"Skipping Sequence Extraction...\n")
     else:
-        os.write(2, b"Completed BED Merge... starting sequence extraction!\n")
+        os.write(1, b"Completed BED Merge... starting sequence extraction!\n")
         df = pd.read_csv(input_genes)
         bed = df[["Chrom", "Begin Ref Site", "End Ref Site"]]
 
         chrom2seq = get_chrom2seq(fasta)
 
-        df["Sequences"] = df.apply(
-            lambda row: str(
-                chrom2seq[row.Chrom][row["Begin Ref Site"] : row["End Ref Site"]]
-            ),
-            axis=1,
-        )
-        df.to_csv(input_genes)
+        try:
+            df["Sequences"] = df.apply(
+                lambda row: str(
+                    chrom2seq[row.Chrom][row["Begin Ref Site"] : row["End Ref Site"]]
+                ),
+                axis=1,
+            )
+            df.to_csv(input_genes)
 
-        fastapath = outdir + "/sequences.fasta"
-        # Create the FASTA file of extracted sequences
-        fp = open(fastapath, "w")
-        for _, row in df.iterrows():
-            chrom_pos = (
-                row["Chrom"]
-                + ":"
-                + str(row["Begin Ref Site"])
-                + "-"
-                + str(row["End Ref Site"])
+            fastapath = outdir + "/sequences.fasta"
+            # Create the FASTA file of extracted sequences
+            fp = open(fastapath, "w")
+            for _, row in df.iterrows():
+                chrom_pos = (
+                    row["Chrom"]
+                    + ":"
+                    + str(row["Begin Ref Site"])
+                    + "-"
+                    + str(row["End Ref Site"])
+                )
+                name = (
+                    ">"
+                    + row["GeneIDs"].replace('"', "").replace(";", "")
+                    + "; "
+                    + chrom_pos
+                    + "\n"
+                )
+                fp.write(name)
+                sequence = row["Sequences"] + "\n"
+                fp.write(sequence)
+            fp.close()
+        except Exception as e:
+            print(
+                "Error in extracting sequences: unable to continue sequence translation. Ensure that you have the correct FASTA file."
             )
-            name = (
-                ">"
-                + row["GeneIDs"].replace('"', "").replace(";", "")
-                + "; "
-                + chrom_pos
-                + "\n"
-            )
-            fp.write(name)
-            sequence = row["Sequences"] + "\n"
-            fp.write(sequence)
-        fp.close()
+            print(f"Error details: {e}")
 
         # Need to use STREME if num_sequences > 50:
-        if len(df) > 50:
-            cmd_str = (
-                "streme -p "
-                + fastapath
-                + " --dna --nmotifs 10 --oc "
-                + outdir
-                + "/motifanalysis 2> /dev/null"
-            )
-        else:
-            cmd_str = (
-                "meme -p"
-                + fastapath
-                + " --dna --nmotifs 5 --maxw 50 --oc "
-                + outdir
-                + "/motifanalysis 2> /tmp/out.txt"
-            )
+        # if len(df) > 50:
+        #     cmd_str = (
+        #         "streme -p "
+        #         + fastapath
+        #         + " --dna --nmotifs 10 --oc "
+        #         + outdir
+        #         + "/motifanalysis 2> /dev/null"
+        #     )
+        # else:
+        #     cmd_str = (
+        #         "meme -p"
+        #         + fastapath
+        #         + " --dna --nmotifs 5 --maxw 50 --oc "
+        #         + outdir
+        #         + "/motifanalysis 2> /tmp/out.txt"
+        #     )
         # Run STREME or MEME and produce the motif analysis
         # subprocess.run(cmd_str, shell=True, stdout=subprocess.DEVNULL)
 

@@ -3,6 +3,7 @@ import tkinter.messagebox
 import customtkinter
 import webbrowser
 from tkinter import filedialog
+import threading
 import subprocess
 import pickle
 import os
@@ -33,8 +34,9 @@ class App(customtkinter.CTk):
         # Configure the Layout
         # configure grid layout (4x4)
         self.grid_columnconfigure(1, weight=1)
-        self.grid_columnconfigure(2, weight=1)
-        self.grid_rowconfigure((0, 1), weight=1)
+        self.grid_columnconfigure(2, weight=2)
+        self.grid_rowconfigure(0, weight=0)
+        self.grid_rowconfigure(1, weight=1)
 
         # create sidebar frame with widgets
         self.sidebar_frame = customtkinter.CTkFrame(self, corner_radius=0)
@@ -82,33 +84,35 @@ class App(customtkinter.CTk):
         # MAIN PAGE
         ## INPUTS
         self.input_frame = customtkinter.CTkScrollableFrame(
-            self, label_text="Enter BindCompare Inputs"
+            self, label_text="Enter BindCompare Inputs", height=280, width=180
         )
         self.input_frame.grid(
             row=0, column=1, padx=(20, 20), pady=(20, 20), sticky="nsew"
         )
+        self.input_frame.columnconfigure(0, weight=1)
+        self.input_frame.columnconfigure(1, weight=0)
         #### add all input options
         self.ref_entry = customtkinter.CTkEntry(
             self.input_frame, placeholder_text="Reference BED Filepath", width=300
         )
-        self.ref_entry.grid(row=2, column=0, padx=10, pady=5, sticky="nsew")
+        self.ref_entry.grid(row=2, column=0, padx=10, pady=5, sticky="new")
         self.ref_button = customtkinter.CTkButton(
             self.input_frame,
             text="Choose File",
             command=lambda entry=self.ref_entry: self.open_file(entry),
         )
-        self.ref_button.grid(row=2, column=1, padx=10, pady=5)
+        self.ref_button.grid(row=2, column=1, padx=10, pady=5, sticky="new")
         #### exp entry
         self.exp_entry = customtkinter.CTkEntry(
             self.input_frame, placeholder_text="Overlayed BED Filepath", width=300
         )
-        self.exp_entry.grid(row=4, column=0, padx=10, pady=5, sticky="nsew")
+        self.exp_entry.grid(row=4, column=0, padx=10, pady=5, sticky="ew")
         self.exp_button = customtkinter.CTkButton(
             self.input_frame,
             text="Choose File",
             command=lambda entry=self.exp_entry: self.open_file(entry),
         )
-        self.exp_button.grid(row=4, column=1, padx=10, pady=5)
+        self.exp_button.grid(row=4, column=1, padx=10, pady=5, sticky="ew")
         #### scope entry
         vcmd = self.input_frame.register(self.intcallback)
         self.scope = customtkinter.CTkEntry(
@@ -118,8 +122,8 @@ class App(customtkinter.CTk):
         self.scope_button = customtkinter.CTkButton(
             self.input_frame, text="Choose Scope", state="disabled"
         )
-        self.scope.grid(row=6, column=0, padx=10, pady=5, sticky="nsew")
-        self.scope_button.grid(row=6, column=1, padx=10, pady=5, sticky="nsew")
+        self.scope.grid(row=6, column=0, padx=10, pady=5, sticky="ew")
+        self.scope_button.grid(row=6, column=1, padx=10, pady=5, sticky="ew")
         #### name entry
         self.name = customtkinter.CTkEntry(
             self.input_frame, placeholder_text="BCExpName", width=300
@@ -127,30 +131,30 @@ class App(customtkinter.CTk):
         self.name_button = customtkinter.CTkButton(
             self.input_frame, text="Choose Name", state="disabled"
         )
-        self.name.grid(row=8, column=0, padx=10, pady=5, sticky="nsew")
-        self.name_button.grid(row=8, column=1, padx=10, pady=5, sticky="nsew")
+        self.name.grid(row=8, column=0, padx=10, pady=5, sticky="ew")
+        self.name_button.grid(row=8, column=1, padx=10, pady=5, sticky="ew")
         #### out-dir
         self.outdir_entry = customtkinter.CTkEntry(
             self.input_frame, placeholder_text="Output Directory", width=300
         )
-        self.outdir_entry.grid(row=10, column=0, padx=10, pady=5, sticky="nsew")
+        self.outdir_entry.grid(row=10, column=0, padx=10, pady=5, sticky="ew")
         self.out_button = customtkinter.CTkButton(
             self.input_frame,
             text="Choose Folder",
             command=lambda entry=self.outdir_entry: self.open_file(entry, True),
         )
-        self.out_button.grid(row=10, column=1, padx=10, pady=5)
+        self.out_button.grid(row=10, column=1, padx=10, pady=5, sticky="ew")
         #### Gene GTF File
         self.gtf_entry = customtkinter.CTkEntry(
             self.input_frame, placeholder_text="[Optional] Genes GTF File", width=300
         )
-        self.gtf_entry.grid(row=12, column=0, padx=10, pady=5, sticky="nsew")
+        self.gtf_entry.grid(row=12, column=0, padx=10, pady=5, sticky="sew")
         self.gtf_button = customtkinter.CTkButton(
             self.input_frame,
             text="Choose File",
             command=lambda entry=self.gtf_entry: self.open_file(entry),
         )
-        self.gtf_button.grid(row=12, column=1, padx=10, pady=5)
+        self.gtf_button.grid(row=12, column=1, padx=10, pady=5, sticky="sew")
         #### FASTA File
         self.fa_entry = customtkinter.CTkEntry(
             self.input_frame, placeholder_text="[Optional] Genome FA File", width=300
@@ -161,32 +165,39 @@ class App(customtkinter.CTk):
             text="Choose File",
             command=lambda entry=self.fa_entry: self.open_file(entry),
         )
-        self.fa_button.grid(row=14, column=1, padx=10, pady=5, sticky="nsew")
+        self.fa_button.grid(row=14, column=1, padx=10, pady=5, sticky="ew")
 
         ## Add Run BindCompare
         self.run_frame = customtkinter.CTkFrame(self)
         self.run_frame.grid(row=1, column=1, padx=20, pady=(0, 20), sticky="nsew")
-        self.run_frame.grid_columnconfigure(2, weight=1)
-        self.run_frame.grid_rowconfigure((0, 1), weight=1)
+        self.run_frame.grid_columnconfigure((0, 1), weight=1)
+        self.run_frame.grid_rowconfigure(0, weight=0)
+        self.run_frame.grid_rowconfigure(1, weight=1)
+
+        ## Add Text Entry with Manual
+        self.help_manual = customtkinter.CTkTextbox(self.run_frame, height=100)
+        self.help_manual.grid(
+            row=1, column=0, columnspan=2, padx=20, pady=(10, 10), sticky="nsew"
+        )
+        self.help_manual.insert(tkinter.END, "Run bindcompare to see terminal output.")
+        self.help_manual.configure(state="disabled", wrap="none")
 
         self.run_entry = customtkinter.CTkEntry(
-            self.run_frame, placeholder_text="BindCompare Currently IDLE.", width=300
+            self.run_frame,
+            placeholder_text="bindcompare currently idle.",
+            width=300,
         )
         self.run_button = customtkinter.CTkButton(
             self.run_frame,
             text="Run BindCompare",
-            command=lambda entry=self.run_entry: self.launch_analysis(entry),
+            command=lambda entry=self.run_entry, output=self.help_manual: self.launch_analysis(
+                entry, output
+            ),
         )
-        self.run_entry.grid(row=0, column=1, padx=20, pady=0)
-        self.run_button.grid(row=0, column=0, padx=20, pady=0)
-        ## Add Text Entry with Manual
-        self.help_manual = customtkinter.CTkTextbox(self.run_frame, height=100)
-        self.help_manual.grid(
-            row=1, column=0, columnspan=2, padx=20, pady=(0, 20), sticky="nsew"
-        )
-        self.help_manual.insert(tkinter.END, self.help["General Help"])
-        self.help_manual.configure(state="disabled")
+        self.run_entry.grid(row=0, column=1, padx=20, pady=10, sticky="nse")
+        self.run_button.grid(row=0, column=0, padx=20, pady=10, sticky="nsw")
 
+        ## Add Visualizer Panel
         ## Add Visualizer Panel
         self.visualize_frame = customtkinter.CTkScrollableFrame(
             self, label_text="Visualize and Interpret Results", width=300
@@ -195,45 +206,40 @@ class App(customtkinter.CTk):
             row=0, rowspan=2, column=2, padx=(0, 20), pady=20, sticky="nsew"
         )
         self.visualize_frame.grid_columnconfigure(0, weight=0)
-        self.visualize_frame.grid_columnconfigure((1, 2), weight=1)
-        self.directory_label = customtkinter.CTkLabel(
-            self.visualize_frame, text="Out. Dir"
+        self.visualize_frame.grid_columnconfigure((0, 1), weight=1)
+        self.visualize_frame.grid_rowconfigure(4, weight=1)
+
+        self.directory_entry = customtkinter.CTkEntry(
+            self.visualize_frame, placeholder_text="BC output directory"
         )
-        self.directory_label.grid(
-            row=0, column=0, padx=(10, 10), pady=20, sticky="nsew"
-        )
-        self.directory_entry = customtkinter.CTkEntry(self.visualize_frame)
-        self.directory_entry.grid(row=0, column=1, padx=0, pady=20, sticky="nsew")
+        self.directory_entry.grid(row=0, column=0, padx=10, pady=10, sticky="new")
+
         self.browse_dir = customtkinter.CTkButton(
             self.visualize_frame, text="Browse", command=self.choose_directory
         )
-        self.browse_dir.grid(row=0, column=2, padx=(10, 10), pady=20)
-        self.image_dropdown_label = customtkinter.CTkLabel(
-            self.visualize_frame, text="Select Image:"
-        )
-        self.image_dropdown_label.grid(row=1, column=0, columnspan=2, padx=(0, 50))
+        self.browse_dir.grid(row=0, column=1, padx=(10, 10), pady=10, sticky="new")
 
         self.image_dropdown = customtkinter.CTkComboBox(
             self.visualize_frame,
             width=200,
-            values=["Image Dropdown"],
+            values=["Dropdown"],
         )
-        self.image_dropdown.grid(row=1, column=1, columnspan=2, padx=(44, 0))
+        self.image_dropdown.grid(row=1, column=0, padx=10, pady=10, sticky="ew")
 
         self.show_image_button = customtkinter.CTkButton(
-            self.visualize_frame, text="Show Image", command=self.show_selected_image
+            self.visualize_frame, text="Show", command=self.show_selected_image
         )
-        self.show_image_button.grid(
-            row=2, column=0, padx=(20, 10), pady=(10, 20), columnspan=3
-        )
+        self.show_image_button.grid(row=1, column=1, padx=10, pady=10, sticky="ew")
 
         self.image_label = customtkinter.CTkLabel(self.visualize_frame, text="")
-        self.image_label.grid(row=3, column=0, columnspan=3, padx=20, pady=10)
+        self.image_label.grid(row=2, column=0, columnspan=2, padx=10, pady=10)
 
         self.interpret_label = customtkinter.CTkLabel(
             self.visualize_frame, text="Select Plot Interpretation Category"
         )
-        self.interpret_label.grid(row=4, column=0, columnspan=3)
+        self.interpret_label.grid(
+            row=3, column=0, columnspan=2, padx=10, pady=10, sticky="ew"
+        )
 
         help_options = [key for key in self.help.keys()]
         help_options.remove("General Help")
@@ -242,22 +248,17 @@ class App(customtkinter.CTk):
             values=["Help Menu"],
         )
         self.interpret_menu.configure(values=help_options)
-        self.interpret_menu.grid(
-            row=5, column=0, columnspan=2, padx=(0, 30), pady=(20, 0)
-        )
+        self.interpret_menu.grid(row=4, column=0, padx=10, pady=10, sticky="ew")
+
         self.interpret_run = customtkinter.CTkButton(
-            self.visualize_frame, text="Show Help Text", command=self.show_help
+            self.visualize_frame, text="Show Help", command=self.show_help
         )
-        self.interpret_run.grid(
-            row=5, column=1, columnspan=2, padx=(60, 0), pady=(20, 0)
-        )
+        self.interpret_run.grid(row=4, column=1, padx=10, pady=10, sticky="ew")
 
-        self.int_help_box = customtkinter.CTkTextbox(self.visualize_frame, width=250)
+        self.int_help_box = customtkinter.CTkTextbox(self.visualize_frame)
         self.int_help_box.grid(
-            row=6, column=0, columnspan=3, pady=20, padx=20, sticky="nsew"
+            row=5, column=0, columnspan=2, pady=10, padx=10, sticky="sew"
         )
-
-        ## Jaccard Similarity
 
     def launch_manual(self):
         """
@@ -351,39 +352,76 @@ class App(customtkinter.CTk):
         else:
             return False
 
-    def launch_analysis(self, entry):
-        entry.delete(0, tkinter.END)
-        entry.insert(tkinter.END, "Launching BindCompare... status in terminal.")
+    def update_text_fields(self, entry, output, message, returncode):
+        def update():
+            if returncode != 0:
+                self.reset_text_field(output, message)
+            else:
+                self.reset_text_field(output, message)
+                self.reset_text_field(entry, "BindCompare completed.")
 
-        gtf = self.gtf_entry.get()
-        if len(self.gtf_entry.get()) == 0:
-            gtf = "None"
-        fa = self.fa_entry.get()
-        if len(self.fa_entry.get()) == 0:
-            fa = "None"
+        # Use after to schedule the update on the main thread
+        entry.after(0, update)
 
-        # Launching Merge
-        subprocess.run(
-            [
-                "bindcompare",
-                "--ref",
-                self.ref_entry.get(),
-                "--exp",
-                self.exp_entry.get(),
-                "--scope",
-                self.scope.get(),
-                "--name",
-                self.name.get(),
-                "--out",
-                self.outdir_entry.get(),
-                "--gtf",
-                gtf,
-                "--fasta",
-                fa,
-            ]
-        )
-        entry.delete(0, tkinter.END)
-        entry.insert(tkinter.END, "BindCompare COMPLETED.")
+    def reset_text_field(self, widget, message=""):
+        widget.configure(state="normal")
+        if isinstance(widget, customtkinter.CTkEntry):
+            widget.delete(0, tkinter.END)
+            widget.insert(0, message)
+        elif isinstance(widget, customtkinter.CTkTextbox):
+            widget.delete("1.0", tkinter.END)
+            widget.insert("1.0", message)
+        widget.configure(state="disabled")
+
+    def launch_analysis(self, entry, output):
+        def run_analysis():
+            gtf = self.gtf_entry.get().strip()
+            if len(self.gtf_entry.get()) == 0:
+                gtf = "None"
+            fa = self.fa_entry.get().strip()
+            if len(self.fa_entry.get()) == 0:
+                fa = "None"
+
+            # Launching Merge
+            result = subprocess.run(
+                [
+                    "bindcompare",
+                    "--ref",
+                    self.ref_entry.get().strip(),
+                    "--exp",
+                    self.exp_entry.get().strip(),
+                    "--scope",
+                    self.scope.get().strip(),
+                    "--name",
+                    self.name.get().strip(),
+                    "--out",
+                    self.outdir_entry.get().strip(),
+                    "--gtf",
+                    gtf,
+                    "--fasta",
+                    fa,
+                ],
+                capture_output=True,
+                text=True,
+            )
+
+            if result.returncode != 0:
+                message = f"bindcompare failed with error: {result.stderr}"
+            else:
+                message = result.stdout
+            print(message)
+
+            # Schedule the update to the text boxes in the main thread
+            self.reset_text_field(output, message=message)
+            self.reset_text_field(entry, message="bindcompare completed.")
+            # self.update_text_fields(entry, output, message, result.returncode)
+
+        # Update the status before launching the thread
+        self.reset_text_field(entry, message="Launching and running bindcompare...")
+
+        # Launch the analysis in a separate thread
+        thread = threading.Thread(target=run_analysis)
+        thread.start()
 
     def launch_comparexp(self):
         subprocess.run(
@@ -480,6 +518,7 @@ class App(customtkinter.CTk):
 
 def main():
     app = App()
+    app.minsize(1015, 565)
     app.mainloop()
 
 
