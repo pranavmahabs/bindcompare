@@ -10,6 +10,7 @@ BindCompare: A novel integrated protein-binding analysis platform
 
 
 .. _Installation Guide: https://github.com/pranavmahabs/bindcompare/blob/main/docs/installation.rst
+.. _Interpretation/Usage Guide: https://github.com/pranavmahabs/bindcompare/blob/main/docs/guide.rst
 .. _bindcompare: https://github.com/pranavmahabs/bindcompare/blob/main/docs/bindcompare.rst
 .. _bindexplore: https://github.com/pranavmahabs/bindcompare/blob/main/docs/bindexplore.rst
 .. _Downstream & comparexp: https://github.com/pranavmahabs/bindcompare/blob/main/docs/comparexp.rst
@@ -17,6 +18,7 @@ BindCompare: A novel integrated protein-binding analysis platform
 `Introduction`_ 
 | `Installation Guide`_ 
 | `Using BindCompare`_ 
+| `Interpretation/Usage Guide`_
 | `Quick Start`_ 
 | `Credits`_
 
