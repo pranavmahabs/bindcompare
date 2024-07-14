@@ -21,9 +21,12 @@ def get_chrom2seq(FASTA_FILE, capitalize=True):
     """
     chrom2seq = {}
     for seq in SeqIO.parse(FASTA_FILE, "fasta"):
-        chrom2seq[seq.description.split()[0]] = (
-            seq.seq.upper() if capitalize else seq.seq
-        )
+        description = seq.description.split()[0]
+        if description.startswith("chr"):
+            key = description[3:]  # Remove the 'chr' prefix
+        else:
+            key = description
+        chrom2seq[key] = seq.seq.upper() if capitalize else seq.seq
     return chrom2seq
 
 
@@ -37,42 +40,42 @@ def downstream(input_genes: str, fasta: str, outdir: str):
 
         chrom2seq = get_chrom2seq(fasta)
 
-        try:
-            df["Sequences"] = df.apply(
-                lambda row: str(
-                    chrom2seq[row.Chrom][row["Begin Ref Site"] : row["End Ref Site"]]
-                ),
-                axis=1,
-            )
-            df.to_csv(input_genes)
+        # try:
+        df["Sequences"] = df.apply(
+            lambda row: str(
+                chrom2seq[row.Chrom][row["Begin Ref Site"] : row["End Ref Site"]]
+            ),
+            axis=1,
+        )
+        df.to_csv(input_genes)
 
-            fastapath = outdir + "/sequences.fasta"
-            # Create the FASTA file of extracted sequences
-            fp = open(fastapath, "w")
-            for _, row in df.iterrows():
-                chrom_pos = (
-                    row["Chrom"]
-                    + ":"
-                    + str(row["Begin Ref Site"])
-                    + "-"
-                    + str(row["End Ref Site"])
-                )
-                name = (
-                    ">"
-                    + row["GeneIDs"].replace('"', "").replace(";", "")
-                    + "; "
-                    + chrom_pos
-                    + "\n"
-                )
-                fp.write(name)
-                sequence = row["Sequences"] + "\n"
-                fp.write(sequence)
-            fp.close()
-        except Exception as e:
-            print(
-                "Error in extracting sequences: unable to continue sequence translation. Ensure that you have the correct FASTA file."
+        fastapath = outdir + "/sequences.fasta"
+        # Create the FASTA file of extracted sequences
+        fp = open(fastapath, "w")
+        for _, row in df.iterrows():
+            chrom_pos = (
+                row["Chrom"]
+                + ":"
+                + str(row["Begin Ref Site"])
+                + "-"
+                + str(row["End Ref Site"])
             )
-            print(f"Error details: {e}")
+            name = (
+                ">"
+                + row["GeneIDs"].replace('"', "").replace(";", "")
+                + "; "
+                + chrom_pos
+                + "\n"
+            )
+            fp.write(name)
+            sequence = row["Sequences"] + "\n"
+            fp.write(sequence)
+        fp.close()
+        # except Exception as e:
+        #     print(
+        #         "Error in extracting sequences: unable to continue sequence translation. Ensure that you have the correct FASTA file."
+        #     )
+        #     print(f"Error details: {e}")
 
         # Need to use STREME if num_sequences > 50:
         # if len(df) > 50:
