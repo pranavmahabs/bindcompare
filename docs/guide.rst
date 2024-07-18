@@ -36,16 +36,18 @@ Normalization and Binning
 
 If two peaks from different datasets fall within the same bin (e.g., 5 kb) but do not strictly overlap, they are still considered in the intersection. Bins are used for intersecting lists rather than individual peaks, which helps in summarizing the binding interactions more effectively.
 
-Why is Protein A vs B different from Protein B vs A?
-++++++++++++++++++++++++++++++++++++++++++++++++++++
+Asymmetry in Correlation Matrix Scores Between Protein Pairs
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-The order of comparison matters due to normalization. When comparing A vs. B, the peaks from A are normalized against the number of peaks in B, and vice versa. This allows for accurate proportional comparisons, highlighting differences in binding specificities between the two datasets.
+An asymmetric correlation matrix scores represents differential interaction between multiple proteins. Multiple TFs and RBPs can form different hubs with differential interacting partners. To identify different hubs of proteins binding to common nucleic acid targets, the user can leverage the correlation matrix scores in `bindexplore`. 
+
+The difference in score is due to normalization specific to each protein. When comparing A (reference) vs. B (overlapped), the number of co-occurrences across bins are normalized against the number of peaks in A, and vice versa. This allows for accurate proportional comparisons, highlighting differences in binding specificities between the two datasets.
 
 .. image:: ./images/explore.png
    :align: center
    :width: 400
 
-For example, in the figure above, we have run ``bindexplore`` on 17 RNA binding proteins (RBPs). When HNRNPA1 is the overlapped binding protein, correlation matrix values are quite high (see row 3). However, when HNRNPA1 is the reference (column 3), correlation matrix values are much lower. This indicates that HNRNPA1 has low specificity and bins along with many different RBPs but few RBPs, such as TAF15, appear alongside all HNRNPA1 sites with high frequency. 
+For example, in the figure above, we have run ``bindexplore`` on 17 nucleic-acid binding proteins. When Protein C is the overlapped binding protein, correlation matrix values are quite high (see row 3). However, when Protein C is the reference (column 3), correlation matrix values are much lower. This indicates that HNRNPA1 has low specificity and bins along with many different RBPs but few RBPs, such as Protein C, appear alongside all HNRNPA1 sites with high frequency. 
 
 Interpreting ``bindcompare``
 ----------------------------
@@ -58,16 +60,17 @@ We have used a default of 1000bp scope region when comparing DNA peaks. While co
 
 Overlap Profiles
 ++++++++++++++++
-Here, we will provide a concrete example and how it could be interpreted. Here we have two comparisons, first TAF15 binding compared to FUS DNA binding. 
+
+Here we will present two overlap profiles produced from `bindcompare` for Protein A and Protein B. In the first image, Protein A is the reference, whose average DNA binding peaks are denoted by the black line. The colored lines indicate the varying overlap categories described in the docs page. 
 
 .. image:: ./images/taf15_fus_dna.png
    :align: center
    :width: 220
 
-Next we have TAF15 DNA binding compared to its RNA binding.
+Here, we present the DNA binding peaks as a reference for Protein A. Overlaid, we have the RNA binding peaks for Protein A. 
 
 .. image:: ./images/taf15_dnarna.png
    :align: center
    :width: 220
 
-Looking at the first plot, we can see that a large number of FUS binding sites bind towards the beginning or end of a TAF15 binding site with much fewer occurring in the extended scoped region. This indicates that FUS positions itself near TAF15 binding. On the other hand, when comparing TAF15 DNA binding to its RNA binding, we see that while there are 100s of sites where DNA and RNA binding overlap, there is no clear skew along the scoped region.
+Looking at the first plot, we can see that a large number of Protein B binding sites bind towards the beginning or end of a Protein A binding site with much fewer occurring in the extended scoped region. This indicates that Protein B positions itself near Protein A binding. On the other hand, when comparing Protein A DNA binding to its RNA binding, we see that while there are 100s of sites where DNA and RNA binding overlap, there is no clear skew along the scoped region.
