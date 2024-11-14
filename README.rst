@@ -27,6 +27,17 @@ BindCompare Function Manuals:
 | `bindexplore`_
 | `Downstream & comparexp`_
 
+If you use BindCompare in your work please cite our paper:
+
+.. code-block:: bibtex
+   
+   @article{10.1093/bioinformatics/btae668,
+       author = {Mahableshwarkar, Pranav and Shum, Jasmine and Ray, Mukulika and Larschan, Erica},
+       title = {BindCompare: A Novel Integrated Protein-Nucleic Acid Binding Analysis Platform},
+       journal = {Bioinformatics},
+       year = {2024},
+       doi = {10.1093/bioinformatics/btae668},
+   }
 
 Introduction
 ============
